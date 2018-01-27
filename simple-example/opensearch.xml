@@ -5,5 +5,5 @@ an unintrusive timing tool for the web
 </Description>
 <InputEncoding>UTF-8</InputEncoding>
 <!--Image width="16" height="16" type="image/x-icon">your site favicon</Image-->
-<Url type="text/html" method="get" template="TabCount.html?val={searchTerms}"/>
+<Url type="text/html" method="get" template="https://yoavdim.bitbucket.io/simple-example/index.html?val={searchTerms}"/>
 </OpenSearchDescription>
