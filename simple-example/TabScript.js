@@ -44,7 +44,7 @@
 		
 		function init_by_query(obj) {
 			if(obj["val"] != undefined){
-				if( ["stoper", "timer", "count"].includes(obj["val"])) {
+				if( ["stoper", "stopper", "timer", "count"].includes(obj["val"])) {
 					original_value = 0;
 					original_direction = true;
 					original_paused = false;
