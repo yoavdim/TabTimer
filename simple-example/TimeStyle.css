@@ -1,0 +1,94 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+	font-size: 100%;
+}
+	
+h1 {
+	color: grey;
+}
+
+.bttn_menu {
+	/* display:flex; */
+}
+
+.main_tray{
+	display:flex;
+}
+	
+.time_disp, .main_btn, .time_label {
+	background-color: LightSeaGreen;
+	color: black;
+	border: 2px solid DodgerBlue;
+	border-radius: 5px;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-right: 8px;
+	
+	font-family: Ariel, Roboto, Sans-serif;
+	font-size: 3em;
+}
+
+.main_btn {
+	/*padding-left: 5px;
+	padding-right: 5px;*/
+	width: 1.5em;
+	height: 1.25em;
+	display:inline-block
+}
+.time_disp {
+	display:inline-block;
+	height: 1.25em;
+
+}
+img#big_push_img {
+	height: 80%;
+}
+
+/*.time_label {
+	content: 
+}*/
+
+.my_icon[icon_label]::after {
+	content: attr(icon_label);
+}
+
+
+.my_icon[icon="play"]::before {
+	content: url('./icons/ic_play.svg');
+}
+.my_icon[icon="pause"]::before {
+	content: url('./icons/ic_pause.svg');
+}
+.my_icon[icon="stop"]::before {
+	content: url('./icons/ic_stop.svg');
+}
+.my_icon[icon="freeze"]::before {
+	content: url('./icons/ic_freeze.svg');
+}
+.my_icon[icon="replay"]::before {
+	content: url('./icons/ic_replay.svg');
+}
+.my_icon[icon="flip"]::before {
+	content: url('./icons/ic_shuffle.svg');
+}
+.my_icon[icon="up"]::before {
+	content: url('./icons/ic_arrow_up.svg');
+}
+.my_icon[icon="down"]::before {
+	content: url('./icons/ic_arrow_down.svg');
+}
+.my_icon[icon="zero"]::before {
+	content: url('./icons/zero.svg');
+}
+.my_icon[icon="bell"]::before {
+	content: url('./icons/ic_notifications.svg');
+}
+.my_icon[icon="label"]::before {
+	content: url('./icons/ic_label.svg');
+}
+.my_icon[icon="snooze"]::before {
+	content: url('./icons/ic_snooze.svg');
+}
