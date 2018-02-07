@@ -1,6 +1,6 @@
 		// TODO: change between clock & timer during frozen values
 
-		
+
 		var Cycle_Interval = 1000; // !!! CONST !!! Do Not Change That !!!
 		var Clock_Cycle_Interval = 1000;
 
@@ -8,19 +8,19 @@
 		const pause_img = "./icons/ic_pause.svg";
 
 		var original_time      = new Date();
-		
+
 		var original_clock	   = false; // true = show the time, false = act normally // TODO: from server
-		
+
 		var original_value     = undefined;
 		var original_direction = undefined; // true = stoper = count_up ; false = count_down;
-		var original_ringer    = undefined; 
-		var original_paused    = undefined; 
+		var original_ringer    = undefined;
+		var original_paused    = undefined;
 		var original_am_i_extension = undefined;
 		var original_am_i_search_query = undefined;
-		
-		var ring_aloud = true; // alert when time is over 
+
+		var ring_aloud = true; // alert when time is over
 		var was_alerted = false;
-		
+
 		if( window.chrome != undefined && chrome.extension != undefined ) {
 			original_value     = chrome.extension.getBackgroundPage().timeselected;
 			original_direction = chrome.extension.getBackgroundPage().isStoper;
@@ -39,9 +39,9 @@
 			if(url_pass_by != undefined) {
 				original_am_i_search_query = true;
 				init_by_query(url_pass_by);
-			} 
+			}
 		}
-		
+
 		function init_by_query(obj) {
 			if(obj["val"] != undefined){
 				if( ["stoper", "stopper", "timer", "count"].includes(obj["val"])) {
@@ -65,7 +65,7 @@
 						original_direction = (obj["dir"] == "up");
 					} else {
 						original_direction = (original_value <= 0);
-					} 
+					}
 				}
 			}
 			/*for(attr in obj) {
@@ -81,65 +81,65 @@
 				}
 			}*/
 		}
-		
+
 		/**
 				TODO: put an end to the chaos of:
 						myFlip myTimer subTime myUpdate startInterval stopInterval
-						
+
 				TODO:
 					revise the ring_aloud mechanisem
 		*/
-		
-		// last set-up 
+
+		// last set-up
 		var setup_time         = original_time;
 		var setup_direction    = original_direction;
 		var setup_value        = original_value;
-		
-		// last flip 
+
+		// last flip
 		var start_time         = setup_time;
 		var start_direction    = setup_direction;
 		var start_value        = setup_value;
-		
+
 		// frozed value: unfreezing or flipping will not override this
 		var frozed_value	   = NaN;
 		var frozed_time		   = original_time;
 
 		// current
 		var present_clock = original_clock;
-		
+
 		var last_time          = start_time; // aka present_time
 		var present_value      = start_value;
 		var present_direction  = start_direction;
-		
+
 		var present_ringer     = original_ringer;
 		var present_paused     = original_paused;
 		var present_frozen	   = false; //lighter interface than the rest
-		
+
 		var semi_original_time = original_time; //for full-reset
 		var semi_semi_original_time = semi_original_time; // for reset
-		
+
 		function isterminated(){ return (! present_direction ) && ( present_ringer  ); } // The termination option for countDown is enabled.
 		function isover()      { return (  isterminated() ) && ( present_value <= 0 ); } // The countDown was over.
 		function ispaused()    { return  present_paused; }                               // no counting
-		//function isactive()    { return (! isover() ) && (! ispaused() ); }              
-		function isBoth()      { return (  isover() ) && (  ispaused() ); }				 // 
+		//function isactive()    { return (! isover() ) && (! ispaused() ); }
+		function isBoth()      { return (  isover() ) && (  ispaused() ); }				 //
 		function isNeedTermination() { return isover() && ! ispaused(); }
-		
+
 		function getStatus(){   if(isactive()){return 'running...';}
-								else if(isBoth()){return 'paused finished.';} 
+								else if(isBoth()){return 'paused finished.';}
 								else if(ispaused()){return 'paused.';}
 								else{return 'finished!';}
 		}
-		
+
 		function isTimeSetAllowed() {
 			return ispaused();
 		}
 
-		
+
 		checkboxes_sync();
 		document.getElementById("pause").addEventListener("click",myFlip);
 		document.getElementById("z").addEventListener("click",startnew);
-		document.getElementById("f").addEventListener("click",change_direction); 
+		document.getElementById("f").addEventListener("click",change_direction);
 		document.getElementById("ag").addEventListener("click",small_reset);
 		document.getElementById("res").addEventListener("click",medium_reset);
 		document.getElementById("winter_res").addEventListener("click",winter_reset);
@@ -152,7 +152,7 @@
 		document.getElementById("clk").addEventListener("click",change_timer_or_clock);
 		document.getElementById("log").addEventListener("click",logtime);
 		document.getElementById("clr_log").addEventListener("click",clearlogs);
-		
+
 		//enter
 		document.getElementById("box").addEventListener("keypress",onEnterPress);
 		function onEnterPress(event){
@@ -164,13 +164,13 @@
 		document.getElementById("big_push").addEventListener("click",myFlip);
 		big_push_update();
 
-		
-		
+
+
 		//Run:
 		var present_interval = false; // true if the cycle is active, !!! do not change manualy !!!
 		var myVar = undefined;
 		myUpdate();
-		
+
 		// ///////////////////////////////////////////
 		//Run Clock:
 		var myClockVar = undefined;
@@ -189,7 +189,7 @@
 				if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
 					return i;
 			}
-			
+
 			if(ice){
 				var today = frozed_time;
 			}else{
@@ -206,14 +206,14 @@
 		clockLoop(); // activate.
 		// ///////////////////////////////////////////
 		// ///////////////////////////////////////////
-		
-		
+
+
 		function myTimer() {
 			if( ispaused() ){ myUpdate(); return; }
 			subTime();
 			myUpdate();
 		}
-		
+
 		function subTime(){
 			var d = new Date();
 			var z = d.getTime() - last_time.getTime();
@@ -224,14 +224,14 @@
 				present_value = present_value - z;
 			}
 		}
-		
+
 		// Types of updates: I had this wrong
-		
+
 		// * myUpdate: update present
 		// * update start & semi-original
 		// * update ringer
 		// * update original -onload
-		
+
 		function myUpdate(){
 			terminationUpdate();
 			guiUpdate();
@@ -241,11 +241,16 @@
 			if(isNeedTermination()) {
 				pause();
 				if(ring_aloud & ! was_alerted) {
-					alert("Time's up!");
-					was_alerted = true;
-				} 
+					beep();
+				}
 			} else was_alerted = false;
 		}
+
+		function beep(){
+			(new Audio("./A-Tone.wav")).play().then( ()=>{alert("Time's up!");},()=>{});
+			was_alerted = true;
+		}
+
 		function changeRingAloud() {
 			ring_aloud = document.getElementById("noise").checked;
 			was_alerted = false;
@@ -259,15 +264,15 @@
 		}
 		function guiUpdate() {
 			freezableGuiUpdate();
-			
+
 			/*if( present_value > 0 ) {
 				document.getElementById("sign").innerHTML = "";
 			} else if( present_value < 0 ) {
 				document.getElementById("sign").innerHTML = "Done.";
-			} else {// if( present_value == 0 ) 
+			} else {// if( present_value == 0 )
 				document.getElementById("sign").innerHTML = "zero";
 			}*/
-			
+
 			big_push_update();
 			checkboxes_sync();
 		}
@@ -289,24 +294,24 @@
 		function freezableGuiUpdate() {
 			if( ! present_frozen ) {
 				forceGuiTimeUpdate(present_value);
-			} 
+			}
 		}
 		function forceGuiTimeUpdate(val) { //bypassing the freeze condition but not the clock/timer state
 			if(!present_clock){
 				bruteForceGuiTimeUpdate(val);
-			} 
+			}
 		}
 		function bruteForceGuiTimeUpdate(val) {
 				document.getElementById("present").innerHTML = format_time(val);
 				document.title = format_time_title(val);
-			
+
 		}
 
-		
+
 		function changeFrozen() {
 			present_frozen = ! present_frozen;
 			if(present_frozen) {
-				frozed_value = present_value; 
+				frozed_value = present_value;
 				frozed_time = Date();
 				forceGuiTimeUpdate(frozed_value);
 			} else {
@@ -314,8 +319,8 @@
 				clockLoop();
 			}
 		}
-		
-		
+
+
 		// ----
 		function change_timer_or_clock() {
 			present_clock = ! present_clock;
@@ -339,10 +344,10 @@
 			}
 		}
 		// ----
-		
+
 		function isInterval(){return present_interval;}
 		function startInterval(){
-			if(isInterval()){ 
+			if(isInterval()){
 				return;
 			}else{
 				last_time = new Date();
@@ -353,7 +358,7 @@
 			}
 		}
 		function stopInterval(){
-			if(isInterval()){ 
+			if(isInterval()){
 				present_interval = false;
 				clearInterval(myVar);
 				subTime();
@@ -362,12 +367,12 @@
 				return;
 			}
 		}
-		
+
 		function myFlip(){ // pause/play
 			if(ispaused() ) resume();
 			else pause();
 		}
-		
+
 		function resume(){
 			if(ispaused() && ! isover()) {
 				present_paused = false;
@@ -381,7 +386,7 @@
 				guiUpdate();
 			}
 		}
-		
+
 		function lockTime( callback ) {
 			if( ! ispaused() ) {
 				pause();
@@ -389,11 +394,11 @@
 				resume();
 			} else callback();
 		}
-		
+
 		function startnew(){
 			do_setup(0);
 		}
-		
+
 		function change_direction(){
 			lockTime( function(){
 				last_time = new Date();
@@ -407,7 +412,7 @@
 			start_direction = present_direction;
 			start_time = last_time;
 		}
-		
+
 		function small_reset(){ // last flip : again
 			lockTime( function(){
 				present_direction = start_direction;
@@ -426,7 +431,7 @@
 			});
 			myUpdate();
 		}
-		
+
 		function try_set_up() {
 			try_generic_set_up(get_setup_data);
 		}
@@ -438,45 +443,45 @@
 				alert("please pause before setting up the time.");
 				return;
 			}
-			var time = getData(); 
+			var time = getData();
 			if( time == undefined || time == NaN ) {
 				alert("please enter a valid time.");
 				return;
 			}
-			do_setup(time); 
+			do_setup(time);
 		}
-		
-		function get_setup_data() { 
+
+		function get_setup_data() {
 			return deformat_time(document.getElementById("box").value);
 		}
-		function get_addup_data() { 
+		function get_addup_data() {
 			return present_value + get_setup_data();
 		}
-		
+
 		function do_setup(time) {
 			setup_value = time;
-			setup_direction = present_direction;	
+			setup_direction = present_direction;
 			medium_reset();
 		}
-		
+
 		function medium_reset(){ // last set-up : reset
 			lockTime( function(){
 				start_direction    = setup_direction;
 				start_value        = setup_value;
 				present_value      = start_value;
 				present_direction  = start_direction;
-			
+
 				present_direction = start_direction;
 				present_value = start_value;
 				semi_semi_original_time = new Date();
 				start_time = semi_semi_original_time;
 				last_time = start_time;
-				
+
 				frozed_value = present_value;
 			});
 			myUpdate();
 		}
-		
+
 		function large_reset(){
 			lockTime( function(){
 				setup_direction    = original_direction;
@@ -485,10 +490,10 @@
 				start_value        = setup_value;
 				present_value      = start_value;
 				present_direction  = start_direction;
-		
+
 				present_ringer     = original_ringer;
 				present_paused     = original_paused;
-			
+
 				present_direction = start_direction;
 				present_value = start_value;
 				frozed_value = NaN;
@@ -500,12 +505,12 @@
 			});
 			myUpdate();
 		}
-		
+
 		function change_ringer(){
-			present_ringer = document.getElementById('sw_rng').checked; 
+			present_ringer = document.getElementById('sw_rng').checked;
 			terminationUpdate();
 		}
-		
+
 		function fetch_query(){ // return an object that its fields are the passed key-value paits in the url
 			var task = location.href;
 			if(task == undefined)
@@ -537,7 +542,7 @@
 			}
 			return result;
 		}
-		
+
 
 		function deformat_time(text){ // return milisec : can be improved
 			if(text == undefined || text == "" ) {console.warn("invalid input, assume zero."); return 0;}
@@ -552,8 +557,8 @@
 			else value = NaN;
 			return neg ? -value : value;
 		}
-		
-		
+
+
 		function format_time_title(milisec) {
 			return format_time(milisec);
 		}
@@ -562,18 +567,18 @@
 			var minus = "";
 			if(milisec < 0){minus = "-";}
 			milisec = Math.abs(milisec);
-			
+
 			var one_uni = 1000;
-			
+
 			var one_s = 1;
 			var one_m = 60*one_s;
 			var one_h = 60*one_m;
 			var max_h = 24;//not included
 			//var one_d = 24*one_h;
-			
+
 			var unisec = Math.round(milisec/one_uni);
 			if(unisec == 0){minus = "";} // small negatives like -0.05 can be rounded to 0
-			
+
 			var hours = Math.floor(unisec/one_h);
 			if(hours >= max_h){alert("time overflow");return "error";} //no support for days
 			unisec = unisec - hours*one_h;
@@ -581,38 +586,38 @@
 			unisec = unisec - minutes*one_m;
 			var seconds = Math.floor(unisec/one_s);
 			unisec = unisec - seconds*one_s; //need to be zero
-			
+
 			//hours   = hours.toString(); // we will make a more elegant view of the hours
 			minutes = minutes.toString();
 			seconds = seconds.toString();
-			
+
 			//if(hours.length == 1) hours = "0" + hours; // we will make a more elegant view of the hours
 			if(minutes.length == 1) minutes = "0" + minutes;
 			if(seconds.length == 1) seconds = "0" + seconds;
-			
+
 			if(hours == 0){return minus + minutes + ":" + seconds;}
 			else { return minus + hours.toString() + ":" + minutes + ":" + seconds; }
 		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+
+
+
+
+
+
+
+
+
+
 		////////////////////////////////////////
 		// list:
 		////////////////////////////////////////
-		
+
 		function logtime(ico){
 			if(ico == undefined) ico = "label";
 			let cln = document.getElementById("list_template").content.cloneNode(true);
 			let tm = (new Date()).toTimeString();
 			let vl = present_value;
-			
+
 			cln.querySelector(".log_value").innerHTML = format_time(vl);
 			cln.querySelector(".log_time").innerHTML = tm;
 			cln.icon=ico;
@@ -622,18 +627,3 @@
 		function clearlogs(){
 			document.getElementById("ulist").innerHTML = "";
 		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
