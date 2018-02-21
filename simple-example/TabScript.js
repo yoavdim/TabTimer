@@ -222,6 +222,7 @@
 				present_value = present_value + z;
 			}else{
 				present_value = present_value - z;
+				if(present_ringer&& present_value<0){present_value=0;}
 			}
 		}
 
