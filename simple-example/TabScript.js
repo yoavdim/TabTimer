@@ -577,6 +577,7 @@
 			//var one_d = 24*one_h;
 
 			var unisec = Math.round(milisec/one_uni);
+			if(present_ringer && unisec<0){unisec=0;}
 			if(unisec == 0){minus = "";} // small negatives like -0.05 can be rounded to 0
 
 			var hours = Math.floor(unisec/one_h);
