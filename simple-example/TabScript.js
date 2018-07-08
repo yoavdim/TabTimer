@@ -626,8 +626,8 @@
 			cln.icon=ico;
 			document.getElementById("ulist").prepend(cln);
 			let tot = document.getElementById("log_total");
-			tot.msec = vl + Number(tot.msec);
-			tot.innerHTML = format_time(Number(tot.msec));
+			tot.msec = vl + Number(tot.getAttribute("msec"));
+			tot.innerHTML = format_time(Number(tot.getAttribute("msec")));
 			let lst = document.getElementById("log_last");
 			lst.msec = vl;
 			lst.innerHTML = format_time(vl);
