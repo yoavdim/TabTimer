@@ -66,6 +66,7 @@
 					} else {
 						original_direction = (original_value <= 0);
 					}
+					original_paused = original_direction;
 				}
 			}
 			/*for(attr in obj) {
