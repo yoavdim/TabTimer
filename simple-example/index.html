@@ -26,17 +26,17 @@
 	<br />
 
 	<div class="bttn_menu">
-		<button id="pause" >pause\play</button> <!-- pause the time movement and allow set-up -->
+		<button id="pause" title="pause the time movement and allow set-up">pause\play</button> <!-- pause the time movement and allow set-up -->
 		<button id="z" class="my_icon1" title="set the counter back at zero" icon="zero">zero</button> <!-- set the counter back at zero -->
 		<button id="f" class="my_icon1" title="change the direction of counting" icon="flip">flip</button> <!-- change the direction of counting-->
 		<button id="frz" class="my_icon1" title="the time continue but the display is frozen" icon="freeze">freeze</button> <!-- the time continue but the display is frozen -->
 		<button id="clk" title="change clock/timer view">clock</button>
-		<button id="log" class="my_icon1" icon="label">log</button>
+		<button id="log" class="my_icon1" icon="label" title="add a new value entry to the log">log</button>
 	</div><div  class="bttn_menu">
-		<button id="ag" >reset round</button> <!-- reset the operation to the last direction reset-->
-		<button id="res" >reset</button> <!-- reset the operation to the last set-up -->
-		<button id="full_res" >full reset</button> <!-- reset the operation to the original ones -->
-		<button id="winter_res" >ice reset</button> <!-- reset the value to the frozen one -->
+		<button id="ag" title="reset the state to the last direction reset">reset round</button> <!-- reset the operation to the last direction reset-->
+		<button id="res" title="reset the state to the last set-up">reset</button> <!-- reset the operation to the last set-up -->
+		<button id="full_res" title="return to the original state">full reset</button> <!-- reset the operation to the original ones -->
+		<button id="winter_res" title="reset the value to the frozen one">ice reset</button> <!-- reset the value to the frozen one -->
 		<input type="checkbox" id="sw_rng" title="change whether the countdown stop at zero">ringer</input> <!-- change whether the countdown stop at zero -->
 		<input type="checkbox" id="noise" class="my_icon1" title="change whether the countdown alert at zero" icon="bell">alert</input> <!-- change whether the countdown alert at zero -->
 	</div>
@@ -48,10 +48,10 @@
 	</div>
 	<div>
 		<template id="list_template">
-			<li class="log_entry my_icon"> The value: <span class="log_value"></span> was logged at: <span class="log_time"></span><span class="log_extra"></span></li>
+			<li class="log_entry my_icon"> The value: <span class="log_value" data-msec="NaN"></span> was logged at: <span class="log_time"></span><span class="log_extra"></span></li>
 		</template>
 		<details id="log_board">
-			<summary>Logged Values:</summary>
+			<summary>Logged Values: Total: <span id="log_total" data-msec="0">empty</span></summary>
 			<span style="white-space:pre">&#09;</span> <button id="clr_log">clear log</button>
 			<ul id="ulist">
 			</ul>
