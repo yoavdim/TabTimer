@@ -164,7 +164,7 @@
 		//big one
 		document.getElementById("big_push").addEventListener("click",myFlip);
 		big_push_update();
-
+		document.getElementById("big_push").focus();
 
 
 		//Run:
