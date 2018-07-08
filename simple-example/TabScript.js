@@ -621,24 +621,24 @@
 			let vl = present_value;
 
 			cln.querySelector(".log_value").innerHTML = format_time(vl);
-			cln.querySelector(".log_value").msec = vl;
+			cln.querySelector(".log_value").setAttribute("msec",vl);
 			cln.querySelector(".log_time").innerHTML = tm;
 			cln.icon=ico;
 			document.getElementById("ulist").prepend(cln);
 			let tot = document.getElementById("log_total");
-			tot.msec = vl + Number(tot.getAttribute("msec"));
+			tot.setAttribute("msec", vl + Number(tot.getAttribute("msec")));
 			tot.innerHTML = format_time(Number(tot.getAttribute("msec")));
 			let lst = document.getElementById("log_last");
-			lst.msec = vl;
+			lst.setAttribute("msec", vl);
 			lst.innerHTML = format_time(vl);
 			return cln;
 		}
 		function clearlogs(){
 			document.getElementById("ulist").innerHTML = "";
 			let tot = document.getElementById("log_total");
-			tot.msec = 0;
+			tot.setAttribute("msec", 0);
 			tot.innerHTML = format_time(0);
 			let lst = document.getElementById("log_last");
-			lst.msec = NaN;
+			lst.setAttribute("msec", NaN);
 			lst.innerHTML = "none";
 		}
