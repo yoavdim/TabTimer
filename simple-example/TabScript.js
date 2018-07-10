@@ -179,31 +179,11 @@
 		function clockLoop(){
 			clearTimeout(myClockVar); // unnecessery ???
 			if(isClockActive()) {
-				forcedClockGuiUpdate();
 				myClockVar = setTimeout(clockLoop, Clock_Cycle_Interval);
-			} else if(present_clock && present_frozen){
-				forcedClockGuiUpdate(true);
-			}
+			} 
+			freezableGuiUpdate();
 		}
-		function forcedClockGuiUpdate(ice = false){
-			function checkTime(i) {
-				if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
-					return i;
-			}
-
-			if(ice){
-				var today = frozed_time;
-			}else{
-				var today = new Date();
-			}
-			var h = today.getHours();
-			var m = today.getMinutes();
-			var s = today.getSeconds();
-			m = checkTime(m);
-			s = checkTime(s);
-			document.getElementById('present').innerHTML = h + ":" + m + ":" + s;
-			document.title =  h + ":" + m + ":" + s;
-		}
+		
 		clockLoop(); // activate.
 		// ///////////////////////////////////////////
 		// ///////////////////////////////////////////
@@ -267,15 +247,6 @@
 		}
 		function guiUpdate() {
 			freezableGuiUpdate();
-
-			/*if( present_value > 0 ) {
-				document.getElementById("sign").innerHTML = "";
-			} else if( present_value < 0 ) {
-				document.getElementById("sign").innerHTML = "Done.";
-			} else {// if( present_value == 0 )
-				document.getElementById("sign").innerHTML = "zero";
-			}*/
-
 			big_push_update();
 			checkboxes_sync();
 		}
@@ -295,19 +266,36 @@
 			}
 		}
 		function freezableGuiUpdate() {
-			if( ! present_frozen ) {
-				forceGuiTimeUpdate(present_value);
-			}
-		}
-		function forceGuiTimeUpdate(val) { //bypassing the freeze condition but not the clock/timer state
-			if(!present_clock){
-				bruteForceGuiTimeUpdate(val);
+			if( (!present_clock) && ! present_frozen ) {
+				bruteForceGuiTimeUpdate(present_value);
+			} else if( (!present_clock) && present_frozen) {
+				bruteForceGuiTimeUpdate(frozen_value);
+			} else { /*if( present_clock )*/
+				bruteForceClockGuiUpdate(present_frozen);
 			}
 		}
 		function bruteForceGuiTimeUpdate(val) {
 				document.getElementById("present").innerHTML = format_time(val);
 				document.title = format_time_title(val);
+		}
+		function bruteForceClockGuiUpdate(ice = false){
+			function checkTime(i) {
+				if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+					return i;
+			}
 
+			if(ice){
+				var today = frozed_time;
+			}else{
+				var today = new Date();
+			}
+			var h = today.getHours();
+			var m = today.getMinutes();
+			var s = today.getSeconds();
+			m = checkTime(m);
+			s = checkTime(s);
+			document.getElementById('present').innerHTML = h + ":" + m + ":" + s;
+			document.title =  h + ":" + m + ":" + s;
 		}
 
 
