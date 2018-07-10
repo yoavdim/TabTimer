@@ -269,7 +269,7 @@
 			if( (!present_clock) && ! present_frozen ) {
 				bruteForceGuiTimeUpdate(present_value);
 			} else if( (!present_clock) && present_frozen) {
-				bruteForceGuiTimeUpdate(frozen_value);
+				bruteForceGuiTimeUpdate(frozed_value);
 			} else { /*if( present_clock )*/
 				bruteForceClockGuiUpdate(present_frozen);
 			}
