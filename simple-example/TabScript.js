@@ -248,9 +248,9 @@
 			} else was_alerted = false;
 		}
 		
-		var beep_aud = new Audio("./A-Tone.wav"));
+		var beep_aud = new Audio("./A-Tone.wav");
 		function beep(){
-			(beep_aud.play().then( ()=>{alert("Time's up!");},()=>{});
+			beep_aud.play().then( ()=>{alert("Time's up!");},()=>{});
 			was_alerted = true;
 		}
 
