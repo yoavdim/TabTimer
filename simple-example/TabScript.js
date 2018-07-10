@@ -303,7 +303,7 @@
 			present_frozen = ! present_frozen;
 			if(present_frozen) {
 				frozed_value = present_value;
-				frozed_time = Date();
+				frozed_time = new Date();
 				freezableGuiUpdate();
 			} else {
 				freezableGuiUpdate();
