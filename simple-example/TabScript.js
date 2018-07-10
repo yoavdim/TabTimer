@@ -304,9 +304,9 @@
 			if(present_frozen) {
 				frozed_value = present_value;
 				frozed_time = Date();
-				forceGuiTimeUpdate(frozed_value);
+				freezableGuiUpdate();
 			} else {
-				forceGuiTimeUpdate(present_value);
+				freezableGuiUpdate();
 				clockLoop();
 			}
 		}
@@ -316,7 +316,7 @@
 		function change_timer_or_clock() {
 			present_clock = ! present_clock;
 			if(present_clock) {
-				forcedClockGuiUpdate(present_frozen);
+				freezableGuiUpdate();
 				clockLoop();
 			} else {
 				myUpdate();
