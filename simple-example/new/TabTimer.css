@@ -1,0 +1,493 @@
+body {
+  --top-bar-height:1.3cm;
+  --feature-height:10rem; /*hardcoded*/
+  --big-btn-width:10rem;
+  --log-top-height:7rem;
+  --time-font-size:5rem;
+  --big-btn-size:6rem;
+  --inner-content-min-width:33%;
+  --inner-content-width:600px;
+  --float-btn-size:40px;
+  --float-btn-margin:10px;
+  --font: Arial, sans-serif;
+  font-family: var(--font);
+
+  --floating-btns-display: fixed; /*fixed*/
+  --log-card-display: block; /*block*/
+
+  --main-color: rgb(80,0,255);
+  --light-main-color: rgb(120,20,255); /*used in the floating btns when active*/
+  --on-main-color: lightgrey;
+  --on-main-bold-color: white; /*used to signal which btn the user selecting */
+  --feature-color: rgb(50,180,200); /* graceful fallback from the gradient */
+  --feature-gradient: linear-gradient(141deg, rgb(20,175,150) 20%, rgb(31,200,219) 50%, rgb(60,160,255) 100%);
+  --on-feature-color: rgb(100,100,100); /* timer tray and log top */
+  --on-feature-bold-color: white;
+  --in-feature-border-color: rgba(200,200,200,0.4); /* seperate the big button from the clock */
+  --mask-color: rgba(255,255,255,0.6);
+  --on-mask-color: black; /* log table*/
+  --back-color: rgb(240,240,240);/*rgb(200,235,245);*/
+  --on-back-color: rgb(20,20,20);
+  --menu-color: rgb(250,250,250);
+  --on-menu-color: rgb(50,50,50);
+  --mask-btn-color: rgb(60,160,255);/*rgb(120,0,220);*/
+  --on-mask-btn-color: rgb(50,50,50); ;/*rgb(0,235,0);*//*lightgrey;*/
+}
+body[dark] {
+  --back-color: rgb(50,50,50);
+  --on-back-color: rgb(150,150,150);
+  --main-color: rgb(40,0,115);
+  --light-main-color: rgb(60,0,250);
+  --on-main-color: rgb(100,100,100);
+  --on-main-bold-color: rgb(160,160,160);
+  --feature-color:rgb(30,30,150);
+  --feature-gradient: linear-gradient(141deg, rgb(30,0,86) 0%, rgb(0,80,200) 51%, rgb(50,30,150) 75%);
+  --on-feature-color: grey;/*rgb(150,100,0);*/
+  --on-feature-bold-color: rgb(160,160,160);
+  --in-feature-border-color: rgba(100,100,100,0.4);
+  --mask-color: rgba(0,0,0,0.5);
+  --on-mask-color:grey;
+  --menu-color: rgb(60,60,60);
+  --on-menu-color: rgb(120,120,120);
+  --mask-btn-color: rgb(110,0,250);
+  --on-mask-btn-color: rgb(180,180,80);
+}
+body[dark][true-black] {
+  --back-color: rgb(0,0,0);
+  --menu-color: rgb(0,0,0);
+}
+body[no-float] {
+  --floating-btns-display: none;
+}
+body[no-log] {
+  --log-card-display: none;
+}
+@media screen and (max-width:550px){
+  body {
+    --feature-height: 7rem;
+    --big-btn-size: 5rem;
+    --time-font-size:4rem;
+    --big-btn-width:6rem;
+  }
+}
+@media screen and (max-width:370px){
+  body {
+    --feature-height: 5.5rem;
+    --big-btn-size: 3.2rem;
+    --time-font-size: 3rem;
+    --big-btn-width: 4rem;
+  }
+}
+@media screen and (min-width:40cm){ /* large screens (not laptops)*/
+  body {
+    --feature-height: calc(10rem + 8vw - 3.2cm);
+    --big-btn-size: calc(6rem + 7.5vw - 3cm);
+    --time-font-size: calc(5rem + 4vw - 1.6cm);
+    --big-btn-width: calc(10rem + 4vw - 1.6cm);
+    --inner-content-min-width:40%;
+  }
+}
+
+
+#top-bar {
+  z-index: 100;
+  border: 0;
+  margin: 0;
+  background-color: var(--main-color);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  position:fixed;
+  left:0;
+  top:0;
+  width:100%;
+  line-height: var(--top-bar-height);
+  height: var(--top-bar-height);
+}
+
+#top-right-btns {
+  position: absolute;
+  right:0;
+  padding-right: 10px;
+}
+#top-bar .top-item {
+  color: var(--on-main-color);
+  padding-right: 10px;
+  padding-left: 10px;
+  vertical-align: middle;
+}
+#top-logo {
+  font-family: var(--font)
+  font-weight: bold;
+}
+#top-bar .top-btn {
+  transition: 0.3s;
+}
+#top-bar .top-btn:hover {
+  color: var(--on-main-bold-color);
+  /*transform: rotate(360deg) translate(9px, 6px);*/
+}
+#hamburger:hover,#home-logo:hover{
+  color: var(--on-main-bold-color);
+}
+
+/***************************************************/
+/* Side Menu                                       */
+/***************************************************/
+
+#side-menu {
+  display:block;
+  z-index: 90;
+  background-color: var(--menu-color);
+  color: var(--on-menu-color);
+  width: 10rem;
+  left: calc(-10rem - 8px); /*including shadow*/
+  position:fixed;
+  top:var(--top-bar-height);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  transition: 200ms;
+  max-height: calc(100% - var(--top-bar-height));
+  overflow-y: auto;
+}
+#side-menu[checked="true"] {
+  left:0;
+}
+@media (max-width: 10cm){
+  #side-menu {
+    width:calc(100% - 1cm);
+    left:calc(-100% + 1cm - 8px);
+    height: calc(100% - var(--top-bar-height));
+  }
+}
+/***************************************************/
+/*  buttons                                        */
+/***************************************************/
+/*.card-content button:not(.entry-btn) {
+  background-color: var(--mask-btn-color);
+  color: var(--on-mask-btn-color);
+  border-radius:40px/40px;
+  border-style: none;
+}*/
+.text-btn {
+  background-color: var(--mask-btn-color);
+  color: var(--on-mask-btn-color);
+  border-radius:30px/30px;
+  border-style: none;
+  padding: 0.2em 0.4em;
+  box-shadow: 2px 2px 2px rgba(0,0,0,0.2);
+}
+.set-btn {
+  background-color: var(--mask-btn-color);
+  color: var(--on-mask-btn-color);
+  border-radius:100%;
+  border-style: none;
+  font-size: 1em;
+  padding: 0.4em 0.4em;
+  margin: 0.5em;
+  box-shadow: 2px 2px 2px rgba(0,0,0,0.2);
+  line-height: 1;
+}
+.set-btn .icon {
+  font-size: inherit;
+}
+.icon-btn {
+  background-color: var(--mask-btn-color);
+  color: var(--on-mask-btn-color);
+  border-radius:30%; /*100%;*/ /*30px/30px;*/
+  border-style: none;
+  padding: 0.5em;
+  height: auto;
+  box-shadow: 2px 2px 2px rgba(0,0,0,0.2);
+}
+
+/***************************************************/
+/* floating buttons (new tab & scroll up)          */
+/***************************************************/
+#fixed-buttons-tray {
+  display: var(--floating-btns-display);
+  position: fixed;
+  z-index: 80;
+  bottom:0;
+  right:0;
+  margin:0;
+}
+.float-btn {
+  display: block;
+  border: 0;
+  border-radius: 100%;
+  height: var(--float-btn-size);
+  width: var(--float-btn-size);
+  margin: var(--float-btn-margin);
+  box-shadow: 2px 2px 3px rgba(0,0,0,0.6);
+  transition: 0.1s;
+}
+#fixed-buttons-tray .float-btn {
+  background-color: var(--main-color);
+  color: var(--on-main-color);
+}
+#log-card .float-btn {
+  background-color: var(--feature-color);
+  color: var(--on-feature-color);
+}
+#btn-scroll-wrap {
+  position:absolute;
+  display: block;
+  right:0;
+  top:0;
+  width:60px; /* btn width +2*margin*/
+  height:100%;
+}
+#btn-scroll {
+  position:sticky;/*TODO fix this*/
+  top: var(--float-btn-margin);
+  z-index: 30;
+}
+#fixed-buttons-tray .float-btn:hover {
+  color: var(--on-main-bold-color);
+}
+#log-card .float-btn:hover {
+  color: var(--on-feature-bold-color);
+}
+.float-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 1px rgba(0,0,0,0.1);
+}
+#fixed-buttons-tray .float-btn:active {
+  background-color: var(--light-main-color);
+}
+#log-top .float-btn:active {
+  background-color: var(--light-main-color); /*TODO change color*/
+}
+
+
+/***************************************************/
+/* content area                                    */
+/***************************************************/
+#content {
+  background: var(--back-color);
+  position:fixed;
+  top:var(--top-bar-height);
+  left: 0;
+  width:100%;
+  height: calc(100% - var(--top-bar-height));
+  overflow-y: auto;
+}
+#inner-content {
+  margin: auto;
+  margin-top: 20px;
+  min-width: var(--inner-content-min-width);/*30% -> 33%*/
+  width: var(--inner-content-width);;
+  max-width: 100%;
+  height: calc(100%-20px);
+}
+
+/***************************************************/
+/* display                                         */
+/***************************************************/
+.card {
+  position: relative;/* only forces the entries buttons position */
+
+  width:100%;
+  background-color: var(--feature-color);
+  background: var(--feature-gradient);
+  color: var(--on-feature-color);
+  box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+}
+.card-content {
+  background-color: var(--mask-color);
+  color: var(--on-mask-color);
+}
+
+.card-header {
+  width:100%;
+  background-color: rgba(0,0,0,0);
+  color: var(--on-feature-color);
+  position: relative;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+}
+/*    ~~~~~  Clock Panel:    ~~~~~   */
+input[type="text"] {
+  background-color: var(--back-color);
+  color: var(--on-back-color);
+}
+#main-content {
+  padding-bottom: 1em;
+}
+#clock-tray {
+  /*display: inline-flex;*/
+  height: var(--feature-height);
+}
+#big-button {
+  height: 100%;
+  width: var(--big-btn-width);
+  /*flex: 0 1 auto;*/
+  background: rgba(0,0,0,0);
+  border-width: 0 2px 0 0 ;
+  border-style:solid;
+  box-sizing: border-box;
+  border-color: var(--in-feature-border-color);
+  position: absolute;
+  left:0;
+}
+#display {
+  font-size: var(--time-font-size);
+  font-family: var(--font);
+  box-sizing: border-box;
+  display:inline-table;
+  width: calc(100% - var(--big-btn-width) - 2px);
+  flex: 0 0 auto;
+  height: 100%;
+  position: absolute;
+  right:0;
+}
+#inner-display {
+  display:table-cell;
+  text-align: center;
+  vertical-align: middle;
+}
+#pause-svg,#play-svg {
+  width:auto;
+  height: var(--big-btn-size);
+  vertical-align: middle;
+  fill: var(--on-feature-color);
+  filter: drop-shadow( 2px 2px 2px rgba(0,0,0,0.5) );
+}
+
+#buttons-tray2[hide] {
+  display:none;
+}
+
+#buttons-tray {
+  -display: flex;
+
+}
+#buttons-tray > * {
+  margin:0.5em;
+}
+
+#setup-tray {
+  display: flex;
+}
+#set-box {
+  flex-grow: 1;
+  margin-left: 1em;
+  margin-right: 1em;
+  border-radius: 30px/30px;
+  border-style: none;
+  box-shadow: 0 0 0.5em rgba(0,0,0,0.3);
+}
+/*    ~~~~~  Log Panel:    ~~~~~   */
+#log-card {
+  display: var(--log-card-display);
+}
+#log-body {
+  --open:"more ";
+}
+#log-body[open] {
+  --open:"less ";
+}
+#log-top {
+  height: var(--log-top-height);
+  position: relative;
+}
+#btn-scroll {
+
+}
+#log-card * {
+  font-size: 1.2rem;
+}
+
+#log-logo {
+  display: inline-block;
+  height:100%;
+  width: var(--log-top-height);
+  font-size: calc(var(--log-top-height) / 2.5);
+  padding-left: 0.2em;
+}
+#log-info {
+  display: inline-flex;
+  vertical-align: bottom;
+  flex-wrap: wrap;
+  padding-left: 0.3em;
+}
+@media screen and (max-width:560px){
+  #log-info{
+    position: absolute;
+    left:0;
+    bottom: 0;
+  }
+}
+#log-info .info {
+  flex-basis: auto;
+  padding-right: 1em;
+  padding-bottom: 0.3em;
+}
+
+#log-tray {
+  line-height: 2em;
+  padding: 0.2em;
+}
+#log-tray::before {
+  content: var(--open);
+  font-weight: bold;
+  padding-left: 0.1em;
+}
+#log-body[open] #log-tray {
+  box-shadow: 0 2px 2px rgba(0,0,0,0.1);
+  /*border-bottom: 1px rgba(200,200,200,1) solid;*/
+}
+
+/***************************************************/
+/* Log  Table                                      */
+/***************************************************/
+#log-table {
+  border-spacing: 0;
+  box-sizing: border-box;
+}
+#log-table td {
+  box-sizing: border-box;
+  z-index:20;
+  position: relative;
+}
+
+#log-table .at {
+  padding-left: 1.5em;
+  padding-right: 1.5em;
+}
+#log-table tr:not(:first-child) .at{ /* only the first '@' is visible */
+  visibility: hidden;
+}
+#log-table .log-entry-time {
+  text-align: right;
+}
+#log-table .log-entry-value {
+  padding-left: 0.4em;
+}
+#log-table tr:nth-child(odd) .log-entry-actions{
+  background-color: var(--mask-color);
+  z-index: 10;
+}
+#log-table .log-entry-actions {
+  position: absolute;
+  right:0;
+  padding-right: 0.5em;
+  width:100%;
+  text-align: right;
+}
+#log-table .entry-btn {
+  border-radius: 100%;
+  /*border-width: 1px;
+  border-style: solid;
+  border-color: grey;*/
+  height: 1em;
+  width:  1em;
+  box-sizing: border-box;
+}
+#log-table .entry-remove-btn {
+  background-color: firebrick;
+}
+#log-table .entry-set-btn {
+  background-color: green;
+}
+
+/***************************************************/
+/* Log                                             */
+/***************************************************/
