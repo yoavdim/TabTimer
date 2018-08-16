@@ -693,10 +693,12 @@
 		}
 		function clearlogs(){
 			document.getElementById("log-table").innerHTML = "";
-			let tot = document.getElementById("log-total");
-			tot.setAttribute("msec", 0);
+			let tot = document.getElementById("log-total").querySelector(".log-value");
+			tot.setAttribute("value", 0);
 			tot.innerHTML = format_time(0);
-			let lst = document.getElementById("log-last");
-			lst.setAttribute("msec", NaN);
+			let lst = document.getElementById("log-last").querySelector(".log-value");
+			lst.setAttribute("value", NaN);
 			lst.innerHTML = "none";
+			let cnt = document.getElementById("log-count").querySelector(".log-value");
+			cnt.innerHTML = "0";
 		}
