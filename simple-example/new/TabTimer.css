@@ -62,15 +62,15 @@ body[no-float] {
 body[no-log] {
   --log-card-display: none;
 }
-/*@media screen and (max-width:550px){
+@media screen and (max-width:550px){
   body {
-    --feature-height: 7rem;
+    --feature-height: 8rem;
     --big-btn-size: 5rem;
     --time-font-size:4rem;
     --big-btn-width:6rem;
   }
 }
-@media screen and (max-width:370px){
+/*@media screen and (max-width:370px){
   body {
     --feature-height: 5.5rem;
     --big-btn-size: 3.2rem;
@@ -150,10 +150,10 @@ body[no-log] {
 #side-menu[checked="true"] {
   left:0;
 }
-@media (max-width: 10cm){
+@media (max-width: 12cm){
   #side-menu {
-    width:calc(100% - 1cm);
-    left:calc(-100% + 1cm - 8px);
+    width:calc(100% - 2cm);
+    left:calc(-100% + 2cm - 8px);
     height: calc(100% - var(--top-bar-height));
   }
 }
