@@ -62,7 +62,7 @@ body[no-float] {
 body[no-log] {
   --log-card-display: none;
 }
-@media screen and (max-width:550px){
+/*@media screen and (max-width:550px){
   body {
     --feature-height: 7rem;
     --big-btn-size: 5rem;
@@ -77,7 +77,7 @@ body[no-log] {
     --time-font-size: 3rem;
     --big-btn-width: 4rem;
   }
-}
+}*/
 @media screen and (min-width:40cm){ /* large screens (not laptops)*/
   body {
     --feature-height: calc(10rem + 8vw - 3.2cm);
