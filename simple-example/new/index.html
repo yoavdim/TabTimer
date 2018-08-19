@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <!--
   Copyright (C) 2018  Yoav Dim, All Rights Reserved.
 -->
@@ -11,9 +11,12 @@
   <meta name="description" content="A small & unintrusive bidirectional timer web-app which show its value in the tab title.">
   <meta name="keywords" content="Timer,Stopper,counter,stopwatch,clock,countdown,tab,dark mode,online,free">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <!--link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css"/-->
+  <meta name="theme-color" content="rgb(120,20,255)">
+  <link 
   <link rel="stylesheet" href="TabTimer.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="manifest" href="manifest.json">
 </head>
 
 <body id="body-id">
@@ -93,13 +96,13 @@
   <div id="fixed-buttons-tray">
     <button  onclick="window.open('./index.html')" target="_blank" id="btn-plus" class="float-btn"><i class="material-icons" title="new tab">add</i></button>
   </div>
-  <div id="content" onclick="close_side_menu()">
+  <main id="content" onclick="close_side_menu()">
     <div id="inner-content">
 
       <div id="main-card-wrapper" class="card-wrapper">
         <div id="main-card" class="card">
           <div id="clock-tray" class="card-header">
-            <button id="big-button">
+            <button id="big-button" aria-label="Pause or Play">
               <!--img id="big-img" src="https://material.io/tools/icons/static/icons/outline-pause-24px.svg" alt="pause"-->
               <svg id="pause-svg" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px"
               	 height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
@@ -206,7 +209,7 @@
       </div>
 
       <br/>
-    </div>
+    </main>
   </div>
 
 
