@@ -263,12 +263,12 @@ body[no-log] {
 /***************************************************/
 #content {
   background: var(--back-color);
-  position:fixed;
+  position:absolute;
   top:var(--top-bar-height);
   left: 0;
   width:100%;
-  height: calc(100% - var(--top-bar-height));
-  overflow-y: auto;
+  min-height: calc(100% - var(--top-bar-height));
+  /*overflow-y: auto;*/
 }
 #inner-content {
   margin: auto;

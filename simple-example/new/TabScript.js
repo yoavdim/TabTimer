@@ -168,6 +168,11 @@
 		document.getElementById("log-pop-btn").addEventListener("click",logpop);
 		document.getElementById("log-lap-btn").addEventListener("click",loglap);
 
+		document.getElementById("log-add-btn").addEventListener("click", (e)=>{e.stopPropagation();});
+		document.getElementById("log-clear-btn").addEventListener("click", (e)=>{e.stopPropagation();});
+		document.getElementById("log-pop-btn").addEventListener("click", (e)=>{e.stopPropagation();});
+		document.getElementById("log-lap-btn").addEventListener("click", (e)=>{e.stopPropagation();});
+
 
 		//enter
 		document.getElementById("set-box").addEventListener("keypress",onEnterPress);
