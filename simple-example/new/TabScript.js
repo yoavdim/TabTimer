@@ -303,23 +303,26 @@
 				document.title = format_time_title(val);
 		}
 		function bruteForceClockGuiUpdate(ice = false){
-			function checkTime(i) {
-				if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
-					return i;
-			}
-
 			if(ice){
 				var today = frozed_time;
 			}else{
 				var today = new Date();
+			}
+			var str = clock_format(today);
+			document.getElementById('inner-display').innerHTML = str;
+			document.title = str;
+		}
+		function clock_format(today){
+			function checkTime(i) {
+				if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+					return i;
 			}
 			var h = today.getHours();
 			var m = today.getMinutes();
 			var s = today.getSeconds();
 			m = checkTime(m);
 			s = checkTime(s);
-			document.getElementById('inner-display').innerHTML = h + ":" + m + ":" + s;
-			document.title =  h + ":" + m + ":" + s;
+			return h + ":" + m + ":" + s;
 		}
 
 
@@ -656,7 +659,7 @@
 		function logtime(){
 			//if(ico == undefined) ico = "label";
 			let cln = document.getElementById("list_template").content.cloneNode(true);
-			let tm = (new Date()).toTimeString();
+			let tm = clock_format(new Date());
 			let vl = present_value;
 
 			cln.querySelector(".log-value").innerHTML = format_time(vl);
