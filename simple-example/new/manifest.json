@@ -11,6 +11,16 @@
       "src":"clock_16.png",
       "sizes": "16x16",
       "type": "image/png"
+    },
+    {
+      "src":"clock_192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src":"clock_512.png",
+      "sizes": "512x512",
+      "type": "image/png"
     }
   ],
   "start_url": "./",
