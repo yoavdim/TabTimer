@@ -9,10 +9,6 @@
 
 
 
-
-		// TODO: change between clock & timer during frozen values
-
-
 		var Cycle_Interval = 1000; // !!! CONST !!! Do Not Change That !!!
 		var Clock_Cycle_Interval = 1000;
 
@@ -380,6 +376,7 @@
 				present_interval = false;
 				clearInterval(myVar);
 				subTime();
+				myUpdate();
 				return;
 			}else{
 				return;
@@ -642,15 +639,17 @@
 			console.log("My Heritage:\n");
 			while(node){
 				let tag = node.tagName;
-				let id = node.getAttribute("id");
-				let cls = node.getAttribute("class");
-				let nm = node.getAttribute("name");
-				let str = ""+ tag + ":  ";
-				if(id) str = str +" id=\""+id+"\"";
-				if(nm) str = str +" name=\""+nm+"\"";
-				if(cls) str = str +" class=\""+cls+"\"";
-				str+=" ;\n";
-				console.log(str);
+				if(tag){
+					let id = node.getAttribute("id");
+					let cls = node.getAttribute("class");
+					let nm = node.getAttribute("name");
+					let str = ""+ tag + ":  ";
+					if(id) str = str +" id=\""+id+"\"";
+					if(nm) str = str +" name=\""+nm+"\"";
+					if(cls) str = str +" class=\""+cls+"\"";
+					str+=" ;\n";
+					console.log(str);
+				}
 				node = node.parentNode;
 			}
 			console.log(" - END - \n");
@@ -666,7 +665,12 @@
 			cln.querySelector(".log-value").setAttribute("value",vl);
 			cln.querySelector(".log-time").innerHTML = tm;
 			//cln.icon=ico;
+			cln.querySelector(".entry-set-btn").addEventListener("click", do_log_setup);
+			cln.querySelector(".entry-remove-btn").addEventListener("click", do_log_remove);
+
+
 			document.getElementById("log-table").prepend(cln);
+
 			let tot = document.getElementById("log-total").querySelector(".log-value");
 			tot.setAttribute("value", vl + Number(tot.getAttribute("value")));
 			tot.innerHTML = format_time(Number(tot.getAttribute("value")));
@@ -677,28 +681,75 @@
 			cnt.setAttribute("value", 1 + Number(cnt.getAttribute("value")));
 			cnt.innerHTML = cnt.getAttribute("value");
 			return cln;
-		}
+		} // end of logtime.
+
 		function loglap(){
 			logtime();
 			startnew(); // set zero
 		}
+
 		function logpop(){
-			let head = document.getElementById("log-table").querySelector("tr:first-of-type()");
+			let head = document.getElementById("log-table").querySelector("tr:first-of-type");
 			if(head){
-				do_setup(head.querySelector(".log-value").getAttribute("value"));
+				do_setup(Number(head.querySelector(".log-entry-value").getAttribute("value")));
 				logremove(head);
 			} else {
 				alert("Oops.. The log is empty.");
 			}
 		}
+
+		function do_log_remove(){ // wrapper to logremove()
+			var node = this;
+			while(node){ //TODO: validation and tag=html recognition
+				if((node.classList!=undefined) && node.classList.contains("log-entry")){
+					logremove(node);
+					return;
+				}
+				node = node.parentNode;
+			}
+			alert("Well... isnt the log already empty?");
+		}
 		function logremove(item) {
 			if(!item){alert("Oops.. Something went wrong."); return;}
 			let val = Number(item.querySelector(".log-entry-value").getAttribute("value"));
-			let head = document.getElementById("log-table").querySelector("tr:first-of-type()");
-			if(item.isSameNode(head)) { // first element
-				let // TODO continue function
+
+			let cnt = document.getElementById("log-count").querySelector(".log-value");
+			cnt.setAttribute("value", Number(cnt.getAttribute("value")) - 1);
+			cnt.innerHTML = cnt.getAttribute("value");
+
+			let tot = document.getElementById("log-total").querySelector(".log-value");
+			tot.setAttribute("value", Number(tot.getAttribute("value")) - val);
+			tot.innerHTML = format_time(Number(tot.getAttribute("value")));
+
+			item.remove();
+
+			let head = document.getElementById("log-table").querySelector("tr:first-of-type");
+			let lst = document.getElementById("log-last").querySelector(".log-value");
+			if(head == null){
+				lst.setAttribute("value", NaN);
+				lst.innerHTML = "none";
+			} else {
+				lst.setAttribute("value", head.querySelector(".log-entry-value").getAttribute("value"));
+				lst.innerHTML = format_time(Number(lst.getAttribute("value")));
 			}
+		} //end of logremove.
+
+		function do_log_setup(){ // wrapper to logsetup()
+			var node = this;
+			while(node){ //TODO: validation and tag=html recognition
+				if((node.classList!=undefined) && node.classList.contains("log-entry")){
+					logsetup(node);
+					return;
+				}
+				node = node.parentNode;
+			}
+			alert("Well... isnt the log already empty?");
 		}
+		function logsetup(item) {
+			if(!item){alert("Oops.. Something went wrong."); return;}
+			do_setup(Number(item.querySelector(".log-entry-value").getAttribute("value")));
+		}
+
 		function clearlogs(){
 			document.getElementById("log-table").innerHTML = "";
 			let tot = document.getElementById("log-total").querySelector(".log-value");
