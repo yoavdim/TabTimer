@@ -182,6 +182,7 @@
 		big_push_update();
 		document.getElementById("big-button").focus();
 
+		syncDirectionHint();
 
 		//Run:
 		var present_interval = false; // true if the cycle is active, !!! do not change manualy !!!
@@ -328,9 +329,18 @@
 				frozed_value = present_value;
 				frozed_time = new Date();
 				freezableGuiUpdate();
+				syncFrozenHint();
 			} else {
 				freezableGuiUpdate();
+				syncFrozenHint();
 				clockLoop();
+			}
+		}
+		function syncFrozenHint() {
+			if(present_frozen) {
+				document.getElementById("info-tray").setAttribute("frozen","true");
+			} else {
+				document.getElementById("info-tray").removeAttribute("frozen");
 			}
 		}
 
@@ -420,6 +430,7 @@
 				last_time = new Date();
 				present_direction = ! present_direction;
 				set_start_as_present();
+				syncDirectionHint();
 			});
 			myUpdate();
 		}
@@ -427,6 +438,13 @@
 			start_value = present_value;
 			start_direction = present_direction;
 			start_time = last_time;
+		}
+		function syncDirectionHint() {
+			if(present_direction) {
+				document.getElementById("info-tray").removeAttribute("downwards");
+			} else {
+				document.getElementById("info-tray").setAttribute("downwards", "true");
+			}
 		}
 
 		function small_reset(){ // last flip : again

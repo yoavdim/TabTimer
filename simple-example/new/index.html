@@ -28,7 +28,7 @@
   <meta name="msapplication-TileColor" content="#ffffff">
 </head>
 
-<body id="body-id">
+<body id="body-id" no-float="true">
   <div id="top-bar">
     <i class="material-icons top-item" id="hamburger" onclick="toggle_side_menu()">menu</i>
     <a class="material-icons top-item" id="home-logo" href="/">home</a>
@@ -53,7 +53,7 @@
       <input type="checkbox">use days</input>
       <hr/>
       <input id="check-log" type="checkbox" onchange="syncLog()">Hide Log</input><br/>
-      <input id="check-float" type="checkbox" onchange="syncFloat()">Hide circles</input>
+      <input id="check-float" type="checkbox" onchange="syncFloat()" checked>Hide circles</input>
       <hr/>
       <i class="material-icons">home</i>
       <i class="material-icons">share</i>
@@ -111,6 +111,13 @@
       <div id="main-card-wrapper" class="card-wrapper">
         <div id="main-card" class="card">
           <div id="clock-tray" class="card-header">
+            <span id=info-tray>
+              <i id="frz-info" class="info-icon material-icons">ac_unit</i>
+              <span id="dir-info">
+                <i id="info-icon-up" class="info-icon material-icons">arrow_upward</i>
+                <i id="info-icon-down" class="info-icon material-icons">arrow_downward</i>
+              </span>
+            </span>
             <button id="big-button" aria-label="Pause or Play">
               <!--img id="big-img" src="https://material.io/tools/icons/static/icons/outline-pause-24px.svg" alt="pause"-->
               <svg id="pause-svg" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px"
@@ -129,7 +136,7 @@
                   <path d="M0 0h24v24H0z" fill="none"/>
               </svg>
             </button><!--
-            --><span id="display"><span id="inner-display">00:00:00</span></span>
+          --><span id="display"><span id="inner-display">00:00:00</span></span>
           </div>
           <!--script>
               var running = true;
