@@ -16,6 +16,7 @@ body {
 
   --icon-padding: 0.5em;
   --icon-margin: 0.5em;
+  --icon-top-space:1em;
 
   --floating-btns-display: fixed; /*fixed*/
   --log-card-display: block; /*block*/
@@ -78,13 +79,16 @@ body[no-log] {
 }
 @media screen and (max-width:7.4cm){
   body {
+    --top-bar-height:1.15cm;
+    --inner-content-top-margin: 0px;
     --top-bar-item-padding-lr: 3px;
     --icon-padding: 0.4em;
     --icon-margin: 0.25em;
+    --icon-top-space:0.7em;
 
     --big-btn-size: calc(5rem * 0.8);
     --big-btn-width: calc(6rem * 0.8);
-    --feature-height: calc(8rem * 0.8);
+    --feature-height: calc(8rem * 0.7);
     --time-font-size: calc(4rem * 0.8);
   }
 }
@@ -328,7 +332,7 @@ input[type="text"] {
   color: var(--on-back-color);
 }
 #main-content {
-  padding-bottom: 1em;
+  padding-bottom: var(--icon-top-space);
 }
 #clock-tray {
   /*display: inline-flex;*/
@@ -405,7 +409,7 @@ input[type="text"] {
 
 #buttons-tray {
   -display: flex;
-
+  padding-top: var(--icon-top-space)
 }
 #buttons-tray > * {
   margin: var(--icon-margin);
