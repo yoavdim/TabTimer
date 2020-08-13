@@ -29,6 +29,9 @@
 		var ring_aloud = true; // alert when time is over
 		var was_alerted = false;
 
+		var view_seconds = true; // only in the timer, log will show seconds always
+
+
 		if( window.chrome != undefined && chrome.extension != undefined ) {
 			original_value     = chrome.extension.getBackgroundPage().timeselected;
 			original_direction = chrome.extension.getBackgroundPage().isStoper;
@@ -170,6 +173,11 @@
 		document.getElementById("log-lap-btn").addEventListener("click", (e)=>{e.stopPropagation();});
 
 
+		//view_seconds
+		document.getElementById("check-sec").addEventListener("change",sync_view_sec);
+		function sync_view_sec(event){
+			view_seconds = ! document.getElementById('check-sec').checked
+		}
 		//enter
 		document.getElementById("set-box").addEventListener("keypress",onEnterPress);
 		function onEnterPress(event){
@@ -296,8 +304,8 @@
 			}
 		}
 		function bruteForceGuiTimeUpdate(val) {
-				document.getElementById("inner-display").innerHTML = format_time(val);
-				document.title = format_time_title(val);
+				document.getElementById("inner-display").innerHTML = format_time(val, view_seconds);
+				document.title = format_time_title(val, view_seconds);
 		}
 		function bruteForceClockGuiUpdate(ice = false){
 			if(ice){
@@ -319,7 +327,10 @@
 			var s = today.getSeconds();
 			m = checkTime(m);
 			s = checkTime(s);
-			return h + ":" + m + ":" + s;
+			if(view_seconds)
+				return h + ":" + m + ":" + s;
+			else
+				return h + ":" + m
 		}
 
 
@@ -599,10 +610,10 @@
 		}
 
 
-		function format_time_title(milisec) {
-			return format_time(milisec);
+		function format_time_title(milisec, view_seconds) {
+			return format_time(milisec, view_seconds);
 		}
-		function format_time(milisec){
+		function format_time(milisec, view_seconds){
 			milisec = parseInt(milisec);
 			var minus = "";
 			if(milisec < 0){minus = "-";}
@@ -616,12 +627,15 @@
 			var max_h = 24;//not included
 			//var one_d = 24*one_h;
 
-			var unisec = Math.round(milisec/one_uni);
-			if(present_ringer && unisec<0){unisec=0;}
+			view_seconds = view_seconds || (milisec >= 0 && milisec < one_uni*one_m)  // show seconds in the last minute anyway
+
+			var unisec = Math.round(milisec/one_uni);  // time in seconds
+			if(!view_seconds) unisec = Math.round(unisec / one_m) * one_m  // round to the minute level
+			if(present_ringer && unisec<0){unisec=0;}  // show 0 if negatives are not allowed
 			if(unisec == 0){minus = "";} // small negatives like -0.05 can be rounded to 0
 
 			var hours = Math.floor(unisec/one_h);
-			if(hours >= max_h){alert("time overflow");return "error";} //no support for days
+			// removed annoing feature: if(hours >= max_h){alert("time overflow");return "error";}
 			unisec = unisec - hours*one_h;
 			var minutes = Math.floor(unisec/one_m);
 			unisec = unisec - minutes*one_m;
@@ -636,8 +650,13 @@
 			if(minutes.length == 1) minutes = "0" + minutes;
 			if(seconds.length == 1) seconds = "0" + seconds;
 
-			if(hours == 0){return minus + minutes + ":" + seconds;}
-			else { return minus + hours.toString() + ":" + minutes + ":" + seconds; }
+			if(view_seconds){
+				if(hours == 0){return minus + minutes + ":" + seconds;}
+				else { return minus + hours.toString() + ":" + minutes + ":" + seconds; }
+			} else {
+				if(hours == 0){return minus + minutes;}
+				else { return minus + hours.toString() + ":" + minutes; }
+			}
 		}
 
 
@@ -679,7 +698,7 @@
 			let tm = clock_format(new Date());
 			let vl = present_value;
 
-			cln.querySelector(".log-value").innerHTML = format_time(vl);
+			cln.querySelector(".log-value").innerHTML = format_time(vl, true);
 			cln.querySelector(".log-value").setAttribute("value",vl);
 			cln.querySelector(".log-time").innerHTML = tm;
 			//cln.icon=ico;
@@ -691,10 +710,10 @@
 
 			let tot = document.getElementById("log-total").querySelector(".log-value");
 			tot.setAttribute("value", vl + Number(tot.getAttribute("value")));
-			tot.innerHTML = format_time(Number(tot.getAttribute("value")));
+			tot.innerHTML = format_time(Number(tot.getAttribute("value")), true);
 			let lst = document.getElementById("log-last").querySelector(".log-value");
 			lst.setAttribute("value", vl);
-			lst.innerHTML = format_time(vl);
+			lst.innerHTML = format_time(vl, true);
 			let cnt = document.getElementById("log-count").querySelector(".log-value");
 			cnt.setAttribute("value", 1 + Number(cnt.getAttribute("value")));
 			cnt.innerHTML = cnt.getAttribute("value");
@@ -737,7 +756,7 @@
 
 			let tot = document.getElementById("log-total").querySelector(".log-value");
 			tot.setAttribute("value", Number(tot.getAttribute("value")) - val);
-			tot.innerHTML = format_time(Number(tot.getAttribute("value")));
+			tot.innerHTML = format_time(Number(tot.getAttribute("value")), true);
 
 			item.remove();
 
@@ -748,7 +767,7 @@
 				lst.innerHTML = "none";
 			} else {
 				lst.setAttribute("value", head.querySelector(".log-entry-value").getAttribute("value"));
-				lst.innerHTML = format_time(Number(lst.getAttribute("value")));
+				lst.innerHTML = format_time(Number(lst.getAttribute("value")), true);
 			}
 		} //end of logremove.
 
@@ -772,7 +791,7 @@
 			document.getElementById("log-table").innerHTML = "";
 			let tot = document.getElementById("log-total").querySelector(".log-value");
 			tot.setAttribute("value", 0);
-			tot.innerHTML = format_time(0);
+			tot.innerHTML = format_time(0, true);
 			let lst = document.getElementById("log-last").querySelector(".log-value");
 			lst.setAttribute("value", NaN);
 			lst.innerHTML = "none";
