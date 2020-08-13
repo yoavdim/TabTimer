@@ -654,8 +654,8 @@
 				if(hours == 0){return minus + minutes + ":" + seconds;}
 				else { return minus + hours.toString() + ":" + minutes + ":" + seconds; }
 			} else {
-				if(hours == 0){return minus + minutes;}
-				else { return minus + hours.toString() + ":" + minutes; }
+				// removed: if(hours == 0){return minus + minutes;} -- looks weird
+				return minus + hours.toString() + ":" + minutes;
 			}
 		}
 
