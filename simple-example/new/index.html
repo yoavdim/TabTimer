@@ -229,7 +229,14 @@
 
 
 
-
+<audio id="tone" src="./A-Tone.wav" preload="auto"></audio>
 <script src="./TabScript.js"></script>
+<script>
+    if ('serviceWorker' in navigator) { // offline
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js');
+    });
+    }
+</script>
 </body>
 </html>

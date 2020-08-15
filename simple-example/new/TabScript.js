@@ -12,8 +12,8 @@
 		var Cycle_Interval = 1000; // !!! CONST !!! Do Not Change That !!!
 		var Clock_Cycle_Interval = 1000;
 
-		const play_img = "./icons/ic_play.svg";
-		const pause_img = "./icons/ic_pause.svg";
+		// const play_img = "./icons/ic_play.svg";
+		// const pause_img = "./icons/ic_pause.svg";
 
 		var original_time      = new Date();
 
@@ -253,7 +253,7 @@
 			} else was_alerted = false;
 		}
 
-		var beep_aud = new Audio("./A-Tone.wav");
+		var beep_aud =  document.getElementById('tone');
 		function beep(){
 			beep_aud.play().then( ()=>{alert("Time's up!");},()=>{});
 			was_alerted = true;
