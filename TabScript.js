@@ -1,11 +1,17 @@
-		// TODO: change between clock & timer during frozen values
+/*
+ *  TabScript.js
+ *
+ *  Copyright (C) 2018  Yoav Dim, All Rights Reserved.
+ *
+ */
+
+
+
 
 
 		var Cycle_Interval = 1000; // !!! CONST !!! Do Not Change That !!!
 		var Clock_Cycle_Interval = 1000;
 
-		const play_img = "./icons/ic_play.svg";
-		const pause_img = "./icons/ic_pause.svg";
 
 		var original_time      = new Date();
 
@@ -20,6 +26,20 @@
 
 		var ring_aloud = true; // alert when time is over
 		var was_alerted = false;
+
+		var view_seconds = true; // only in the timer, log will show seconds always
+		var log_with_current = false;
+		var use_days = false;
+
+		window.syncLogCurrentScript = function() {
+			log_with_current = document.getElementById("check-log-current").checked;
+			myUpdate();
+		};
+		window.syncUseDaysScript = function() {
+			use_days = document.getElementById("check-use-days").checked;
+			myUpdate();
+		};
+
 
 		if( window.chrome != undefined && chrome.extension != undefined ) {
 			original_value     = chrome.extension.getBackgroundPage().timeselected;
@@ -69,28 +89,7 @@
 					original_paused = original_direction;
 				}
 			}
-			/*for(attr in obj) {
-				if(attr == "val"){
-					original_value = deformat_time(obj["val"]);
-					if(original_value == undefined || original_value == NaN) {
-						console.warn("warnning: the query passed value is ilegal, defaulting to zero.");
-						original_value = 0;
-					}
-				} else if(attr == "dir"){
-					original_direction = (obj["dir"] == "up");
-					// TODO: ??
-				}
-			}*/
 		}
-
-		/**
-				TODO: put an end to the chaos of:
-						myFlip myTimer subTime myUpdate startInterval stopInterval
-
-				TODO:
-					revise the ring_aloud mechanisem
-		*/
-
 		// last set-up
 		var setup_time         = original_time;
 		var setup_direction    = original_direction;
@@ -122,7 +121,6 @@
 		function isterminated(){ return (! present_direction ) && ( present_ringer  ); } // The termination option for countDown is enabled.
 		function isover()      { return (  isterminated() ) && ( present_value <= 0 ); } // The countDown was over.
 		function ispaused()    { return  present_paused; }                               // no counting
-		//function isactive()    { return (! isover() ) && (! ispaused() ); }
 		function isBoth()      { return (  isover() ) && (  ispaused() ); }				 //
 		function isNeedTermination() { return isover() && ! ispaused(); }
 
@@ -138,7 +136,6 @@
 
 
 		checkboxes_sync();
-		document.getElementById("pause").addEventListener("click",myFlip);
 		document.getElementById("z").addEventListener("click",startnew);
 		document.getElementById("f").addEventListener("click",change_direction);
 		document.getElementById("ag").addEventListener("click",small_reset);
@@ -148,45 +145,56 @@
 		document.getElementById("sw_rng").addEventListener("click",change_ringer);
 		document.getElementById("frz").addEventListener("click",changeFrozen);
 		document.getElementById("noise").addEventListener("click",changeRingAloud);
-		document.getElementById("set").addEventListener("click",try_set_up);
-		document.getElementById("add").addEventListener("click",try_add_up);
+		document.getElementById("set-setup").addEventListener("click",try_set_up);
+		document.getElementById("add-setup").addEventListener("click",try_add_up);
+		document.getElementById("sub-setup").addEventListener("click",try_sub_up);
 		document.getElementById("clk").addEventListener("click",change_timer_or_clock);
-		document.getElementById("log").addEventListener("click",logtime);
-		document.getElementById("clr_log").addEventListener("click",clearlogs);
+		document.getElementById("log-add-btn").addEventListener("click",logtime);
+		document.getElementById("log-clear-btn").addEventListener("click",clearlogs);
+		document.getElementById("log-pop-btn").addEventListener("click",logpop);
+		document.getElementById("log-lap-btn").addEventListener("click",loglap);
 
+		document.getElementById("log-add-btn").addEventListener("click", (e)=>{e.stopPropagation();});
+		document.getElementById("log-clear-btn").addEventListener("click", (e)=>{e.stopPropagation();});
+		document.getElementById("log-pop-btn").addEventListener("click", (e)=>{e.stopPropagation();});
+		document.getElementById("log-lap-btn").addEventListener("click", (e)=>{e.stopPropagation();});
+
+
+		//view_seconds
+		document.getElementById("check-sec").addEventListener("change",sync_view_sec);
+		function sync_view_sec(event){
+			view_seconds = ! document.getElementById('check-sec').checked
+		}
 		//enter
-		document.getElementById("box").addEventListener("keypress",onEnterPress);
+		document.getElementById("set-box").addEventListener("keypress",onEnterPress);
 		function onEnterPress(event){
 			if (event.keyCode == 13) {
 				try_set_up();
 			}
 		}
 		//big one
-		document.getElementById("big_push").addEventListener("click",myFlip);
+		document.getElementById("big-button").addEventListener("click",myFlip);
 		big_push_update();
-		document.getElementById("big_push").focus();
+		document.getElementById("big-button").focus();
 
+		syncDirectionHint();
 
 		//Run:
 		var present_interval = false; // true if the cycle is active, !!! do not change manualy !!!
 		var myVar = undefined;
 		myUpdate();
 
-		// ///////////////////////////////////////////
-		//Run Clock:
 		var myClockVar = undefined;
 		function isClockActive() { return present_clock && ! present_frozen ; }
 		function clockLoop(){
-			clearTimeout(myClockVar); // unnecessery ???
+			clearTimeout(myClockVar);
 			if(isClockActive()) {
 				myClockVar = setTimeout(clockLoop, Clock_Cycle_Interval);
-			} 
+			}
 			freezableGuiUpdate();
 		}
-		
-		clockLoop(); // activate.
-		// ///////////////////////////////////////////
-		// ///////////////////////////////////////////
+
+		clockLoop();
 
 
 		function myTimer() {
@@ -207,62 +215,61 @@
 			}
 		}
 
-		// Types of updates: I had this wrong
-
-		// * myUpdate: update present
-		// * update start & semi-original
-		// * update ringer
-		// * update original -onload
-
 		function myUpdate(){
 			terminationUpdate();
 			guiUpdate();
-			intervalUpdate();
+			syncInterval();
 		}
 		function terminationUpdate() {
 			if(isNeedTermination()) {
 				pause();
-				if(ring_aloud & ! was_alerted) {
+				if(ring_aloud && !was_alerted) {
 					beep();
 				}
 			} else was_alerted = false;
 		}
-		
-		var beep_aud = new Audio("./A-Tone.wav");
+
+		var beep_aud =  document.getElementById('tone');
 		function beep(){
 			beep_aud.play().then( ()=>{alert("Time's up!");},()=>{});
 			was_alerted = true;
 		}
 
 		function changeRingAloud() {
-			ring_aloud = document.getElementById("noise").checked;
+			ring_aloud = ! document.getElementById("noise").checked;
 			was_alerted = false;
 		}
-		function intervalUpdate() {
-			if( ispaused() ){
-				stopInterval();
+		function syncInterval() {
+			if (present_paused) {
+				if (myVar) {
+					clearInterval(myVar);
+					myVar = undefined;
+					present_interval = false;
+				}
 			} else {
-				startInterval();
+				if (!myVar) {
+					last_time = new Date();
+					myVar = setInterval(myTimer, Cycle_Interval);
+					present_interval = true;
+				}
 			}
 		}
 		function guiUpdate() {
 			freezableGuiUpdate();
-			big_push_update();
-			checkboxes_sync();
+			let tot = document.getElementById("log-total").querySelector(".log-value");
+			tot.innerHTML = format_time(Number(tot.getAttribute("value")||0) + (log_with_current ? present_value : 0), true);
 		}
 		function checkboxes_sync(){
 			document.getElementById("sw_rng").checked = present_ringer;
-			document.getElementById("noise").checked = ring_aloud;
+			document.getElementById("noise").checked = ! ring_aloud;
 		}
 		function big_push_update() {
 			if(ispaused()){
-				document.getElementById("big_push_img").src=play_img;
-				//document.getElementById("big_push").setAttribute("icon_label","play ");
-				//document.getElementById("big_push").innerHTML = "play";
+				document.getElementById("pause-svg").setAttribute("style","display:none;");
+				document.getElementById("play-svg").setAttribute("style","");
 			}else{
-				document.getElementById("big_push_img").src=pause_img;
-				//document.getElementById("big_push").setAttribute("icon_label","pause");
-				//document.getElementById("big_push").innerHTML = "pause";
+				document.getElementById("pause-svg").setAttribute("style","");
+				document.getElementById("play-svg").setAttribute("style","display:none;");
 			}
 		}
 		function freezableGuiUpdate() {
@@ -270,32 +277,38 @@
 				bruteForceGuiTimeUpdate(present_value);
 			} else if( (!present_clock) && present_frozen) {
 				bruteForceGuiTimeUpdate(frozed_value);
-			} else { /*if( present_clock )*/
+			} else {
 				bruteForceClockGuiUpdate(present_frozen);
 			}
 		}
 		function bruteForceGuiTimeUpdate(val) {
-				document.getElementById("present").innerHTML = format_time(val);
-				document.title = format_time_title(val);
+				document.getElementById("inner-display").innerHTML = format_time(val, view_seconds);
+				document.title = format_time_title(val, view_seconds);
 		}
 		function bruteForceClockGuiUpdate(ice = false){
-			function checkTime(i) {
-				if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
-					return i;
-			}
-
 			if(ice){
 				var today = frozed_time;
 			}else{
 				var today = new Date();
+			}
+			var str = clock_format(today);
+			document.getElementById('inner-display').innerHTML = str;
+			document.title = str;
+		}
+		function clock_format(today){
+			function checkTime(i) {
+				if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+					return i;
 			}
 			var h = today.getHours();
 			var m = today.getMinutes();
 			var s = today.getSeconds();
 			m = checkTime(m);
 			s = checkTime(s);
-			document.getElementById('present').innerHTML = h + ":" + m + ":" + s;
-			document.title =  h + ":" + m + ":" + s;
+			if(view_seconds)
+				return h + ":" + m + ":" + s;
+			else
+				return h + ":" + m
 		}
 
 
@@ -305,9 +318,18 @@
 				frozed_value = present_value;
 				frozed_time = new Date();
 				freezableGuiUpdate();
+				syncFrozenHint();
 			} else {
 				freezableGuiUpdate();
+				syncFrozenHint();
 				clockLoop();
+			}
+		}
+		function syncFrozenHint() {
+			if(present_frozen) {
+				document.getElementById("info-tray").setAttribute("frozen","true");
+			} else {
+				document.getElementById("info-tray").removeAttribute("frozen");
 			}
 		}
 
@@ -336,29 +358,6 @@
 		}
 		// ----
 
-		function isInterval(){return present_interval;}
-		function startInterval(){
-			if(isInterval()){
-				return;
-			}else{
-				last_time = new Date();
-				present_interval = true;
-				myVar = setInterval(myTimer ,Cycle_Interval);
-				myTimer();
-				return;
-			}
-		}
-		function stopInterval(){
-			if(isInterval()){
-				present_interval = false;
-				clearInterval(myVar);
-				subTime();
-				return;
-			}else{
-				return;
-			}
-		}
-
 		function myFlip(){ // pause/play
 			if(ispaused() ) resume();
 			else pause();
@@ -367,35 +366,35 @@
 		function resume(){
 			if(ispaused() && ! isover()) {
 				present_paused = false;
-				startInterval();
+				big_push_update();
+				myUpdate();
 			} else terminationUpdate();
 		}
 		function pause(){
 			if( ! ispaused() ) {
 				present_paused = true;
-				stopInterval();
-				guiUpdate();
+				subTime();
+				big_push_update();
+				myUpdate();
 			}
 		}
 
-		function lockTime( callback ) {
-			if( ! ispaused() ) {
-				pause();
-				callback();
-				resume();
-			} else callback();
-		}
+
 
 		function startnew(){
 			do_setup(0);
 		}
 
+		function applyState(value, direction) {
+			present_value = value;
+			present_direction = direction;
+			last_time = new Date();
+		}
+
 		function change_direction(){
-			lockTime( function(){
-				last_time = new Date();
-				present_direction = ! present_direction;
-				set_start_as_present();
-			});
+			applyState(present_value, !present_direction);
+			set_start_as_present();
+			syncDirectionHint();
 			myUpdate();
 		}
 		function set_start_as_present() {
@@ -403,23 +402,24 @@
 			start_direction = present_direction;
 			start_time = last_time;
 		}
+		function syncDirectionHint() {
+			if(present_direction) {
+				document.getElementById("info-tray").removeAttribute("downwards");
+			} else {
+				document.getElementById("info-tray").setAttribute("downwards", "true");
+			}
+		}
 
 		function small_reset(){ // last flip : again
-			lockTime( function(){
-				present_direction = start_direction;
-				present_value = start_value;
-				last_time = new Date();
-			});
+			applyState(start_value, start_direction);
 			myUpdate();
 		}
 		function winter_reset(){ // set the value to when it was frozen
-			lockTime( function(){
-				if(frozed_value != NaN) {
-					present_value = frozed_value;
-					last_time = new Date();
-				}
-				else alert("no value to restore");
-			});
+			if(!Number.isNaN(frozed_value)) {
+				applyState(frozed_value, present_direction);
+			} else {
+				alert("no value to restore");
+			}
 			myUpdate();
 		}
 
@@ -428,6 +428,9 @@
 		}
 		function try_add_up() {
 			try_generic_set_up(get_addup_data);
+		}
+		function try_sub_up() {
+			try_generic_set_up(get_subup_data);
 		}
 		function try_generic_set_up(getData) {
 			if(! isTimeSetAllowed() ) {
@@ -443,10 +446,13 @@
 		}
 
 		function get_setup_data() {
-			return deformat_time(document.getElementById("box").value);
+			return deformat_time(document.getElementById("set-box").value);
 		}
 		function get_addup_data() {
 			return present_value + get_setup_data();
+		}
+		function get_subup_data() {
+			return present_value - get_setup_data();
 		}
 
 		function do_setup(time) {
@@ -456,44 +462,32 @@
 		}
 
 		function medium_reset(){ // last set-up : reset
-			lockTime( function(){
-				start_direction    = setup_direction;
-				start_value        = setup_value;
-				present_value      = start_value;
-				present_direction  = start_direction;
+			start_direction    = setup_direction;
+			start_value        = setup_value;
+			applyState(start_value, start_direction);
 
-				present_direction = start_direction;
-				present_value = start_value;
-				semi_semi_original_time = new Date();
-				start_time = semi_semi_original_time;
-				last_time = start_time;
+			semi_semi_original_time = new Date();
+			start_time = semi_semi_original_time;
 
-				frozed_value = present_value;
-			});
+			frozed_value = present_value;
 			myUpdate();
 		}
 
 		function large_reset(){
-			lockTime( function(){
-				setup_direction    = original_direction;
-				start_direction	   = setup_direction;
-				setup_value        = original_value;
-				start_value        = setup_value;
-				present_value      = start_value;
-				present_direction  = start_direction;
+			setup_direction    = original_direction;
+			setup_value        = original_value;
+			present_ringer     = original_ringer;
+			present_paused     = original_paused;
 
-				present_ringer     = original_ringer;
-				present_paused     = original_paused;
+			start_direction	   = setup_direction;
+			start_value        = setup_value;
+			applyState(start_value, start_direction);
 
-				present_direction = start_direction;
-				present_value = start_value;
-				frozed_value = NaN;
-				semi_original_time = new Date();
-				semi_semi_original_time = semi_original_time;
-				setup_time = semi_semi_original_time;
-				start_time = setup_time;
-				last_time = start_time;
-			});
+			frozed_value = NaN;
+			semi_original_time = new Date();
+			semi_semi_original_time = semi_original_time;
+			setup_time = semi_semi_original_time;
+			start_time = setup_time;
 			myUpdate();
 		}
 
@@ -550,10 +544,10 @@
 		}
 
 
-		function format_time_title(milisec) {
-			return format_time(milisec);
+		function format_time_title(milisec, view_seconds) {
+			return format_time(milisec, view_seconds);
 		}
-		function format_time(milisec){
+		function format_time(milisec, view_seconds){
 			milisec = parseInt(milisec);
 			var minus = "";
 			if(milisec < 0){minus = "-";}
@@ -564,71 +558,137 @@
 			var one_s = 1;
 			var one_m = 60*one_s;
 			var one_h = 60*one_m;
-			var max_h = 24;//not included
-			//var one_d = 24*one_h;
+
+			view_seconds = view_seconds || (milisec >= 0 && milisec < one_uni*one_m)
 
 			var unisec = Math.round(milisec/one_uni);
+			if(!view_seconds) unisec = Math.round(unisec / one_m) * one_m
 			if(present_ringer && unisec<0){unisec=0;}
-			if(unisec == 0){minus = "";} // small negatives like -0.05 can be rounded to 0
+			if(unisec == 0){minus = "";}
 
 			var hours = Math.floor(unisec/one_h);
-			if(hours >= max_h){alert("time overflow");return "error";} //no support for days
 			unisec = unisec - hours*one_h;
+			
+			var days = (use_days && hours >= 24) ? Math.floor(hours/24) + "d " : "";
+			if (days) hours = hours % 24;
+			
 			var minutes = Math.floor(unisec/one_m);
 			unisec = unisec - minutes*one_m;
 			var seconds = Math.floor(unisec/one_s);
-			unisec = unisec - seconds*one_s; //need to be zero
+			unisec = unisec - seconds*one_s;
 
-			//hours   = hours.toString(); // we will make a more elegant view of the hours
 			minutes = minutes.toString();
 			seconds = seconds.toString();
 
-			//if(hours.length == 1) hours = "0" + hours; // we will make a more elegant view of the hours
 			if(minutes.length == 1) minutes = "0" + minutes;
 			if(seconds.length == 1) seconds = "0" + seconds;
 
-			if(hours == 0){return minus + minutes + ":" + seconds;}
-			else { return minus + hours.toString() + ":" + minutes + ":" + seconds; }
+			if(view_seconds){
+				if(hours == 0 && !days){ return minus + minutes + ":" + seconds; }
+				else { return minus + days + hours.toString() + ":" + minutes + ":" + seconds; }
+			} else {
+				return minus + days + hours.toString() + ":" + minutes;
+			}
 		}
 
 
 
 
-
-
-
-
-
-
-		////////////////////////////////////////
-		// list:
-		////////////////////////////////////////
-
-		function logtime(ico){
-			if(ico == undefined) ico = "label";
+		function logtime(){
 			let cln = document.getElementById("list_template").content.cloneNode(true);
-			let tm = (new Date()).toTimeString();
+			let tm = clock_format(new Date());
 			let vl = present_value;
 
-			cln.querySelector(".log_value").innerHTML = format_time(vl);
-			cln.querySelector(".log_value").setAttribute("msec",vl);
-			cln.querySelector(".log_time").innerHTML = tm;
-			cln.icon=ico;
-			document.getElementById("ulist").prepend(cln);
-			let tot = document.getElementById("log_total");
-			tot.setAttribute("msec", vl + Number(tot.getAttribute("msec")));
-			tot.innerHTML = format_time(Number(tot.getAttribute("msec")));
-			let lst = document.getElementById("log_last");
-			lst.setAttribute("msec", vl);
-			lst.innerHTML = format_time(vl);
+			cln.querySelector(".log-value").innerHTML = format_time(vl, true);
+			cln.querySelector(".log-value").setAttribute("value",vl);
+			cln.querySelector(".log-time").innerHTML = tm;
+			cln.querySelector(".entry-set-btn").addEventListener("click", do_log_setup);
+			cln.querySelector(".entry-remove-btn").addEventListener("click", do_log_remove);
+
+
+			document.getElementById("log-table").prepend(cln);
+
+			let tot = document.getElementById("log-total").querySelector(".log-value");
+			tot.setAttribute("value", vl + Number(tot.getAttribute("value")));
+			tot.innerHTML = format_time(Number(tot.getAttribute("value")), true);
+			let lst = document.getElementById("log-last").querySelector(".log-value");
+			lst.setAttribute("value", vl);
+			lst.innerHTML = format_time(vl, true);
+			let cnt = document.getElementById("log-count").querySelector(".log-value");
+			cnt.setAttribute("value", 1 + Number(cnt.getAttribute("value")));
+			cnt.innerHTML = cnt.getAttribute("value");
 			return cln;
+		} // end of logtime.
+
+		function loglap(){
+			logtime();
+			startnew(); // set zero
 		}
+
+		function logpop(){
+			let head = document.getElementById("log-table").querySelector("tr:first-of-type");
+			if(head){
+				do_setup(Number(head.querySelector(".log-entry-value").getAttribute("value")));
+				logremove(head);
+			} else {
+				alert("Oops.. The log is empty.");
+			}
+		}
+
+		function do_log_remove(){ // wrapper to logremove()
+			let node = this.closest('.log-entry');
+			if(node) {
+				logremove(node);
+			} else {
+				alert("Well... isnt the log already empty?");
+			}
+		}
+		function logremove(item) {
+			if(!item){alert("Oops.. Something went wrong."); return;}
+			let val = Number(item.querySelector(".log-entry-value").getAttribute("value"));
+
+			let cnt = document.getElementById("log-count").querySelector(".log-value");
+			cnt.setAttribute("value", Number(cnt.getAttribute("value")) - 1);
+			cnt.innerHTML = cnt.getAttribute("value");
+
+			let tot = document.getElementById("log-total").querySelector(".log-value");
+			tot.setAttribute("value", Number(tot.getAttribute("value")) - val);
+			tot.innerHTML = format_time(Number(tot.getAttribute("value")), true);
+
+			item.remove();
+
+			let head = document.getElementById("log-table").querySelector("tr:first-of-type");
+			let lst = document.getElementById("log-last").querySelector(".log-value");
+			if(head == null){
+				lst.setAttribute("value", NaN);
+				lst.innerHTML = "none";
+			} else {
+				lst.setAttribute("value", head.querySelector(".log-entry-value").getAttribute("value"));
+				lst.innerHTML = format_time(Number(lst.getAttribute("value")), true);
+			}
+		} //end of logremove.
+
+		function do_log_setup(){ // wrapper to logsetup()
+			let node = this.closest('.log-entry');
+			if(node) {
+				logsetup(node);
+			} else {
+				alert("Well... isnt the log already empty?");
+			}
+		}
+		function logsetup(item) {
+			if(!item){alert("Oops.. Something went wrong."); return;}
+			do_setup(Number(item.querySelector(".log-entry-value").getAttribute("value")));
+		}
+
 		function clearlogs(){
-			document.getElementById("ulist").innerHTML = "";
-			let tot = document.getElementById("log_total");
-			tot.setAttribute("msec", 0);
-			tot.innerHTML = format_time(0);
-			let lst = document.getElementById("log_last");
-			lst.setAttribute("msec", NaN);
+			document.getElementById("log-table").innerHTML = "";
+			let tot = document.getElementById("log-total").querySelector(".log-value");
+			tot.setAttribute("value", 0);
+			tot.innerHTML = format_time(0, true);
+			let lst = document.getElementById("log-last").querySelector(".log-value");
+			lst.setAttribute("value", NaN);
 			lst.innerHTML = "none";
+			let cnt = document.getElementById("log-count").querySelector(".log-value");
+			cnt.innerHTML = "0";
 		}

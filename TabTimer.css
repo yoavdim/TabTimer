@@ -406,6 +406,9 @@ input[type="text"] {
 #buttons-tray2[hide] {
   display:none;
 }
+#buttons-tray2 > * {
+  margin: var(--icon-margin);
+}
 
 #buttons-tray {
   -display: flex;
@@ -545,3 +548,45 @@ input[type="text"] {
 /***************************************************/
 /* Log                                             */
 /***************************************************/
+
+/* Modal overlay */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay[active="true"] {
+  display: flex;
+}
+.modal-content {
+  background-color: var(--back-color);
+  color: var(--on-back-color);
+  padding: 2em;
+  border-radius: 8px;
+  max-width: 90%;
+  max-height: 90%;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  position: relative;
+}
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  color: inherit;
+}
+.modal-content img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--on-back-color);
+}
