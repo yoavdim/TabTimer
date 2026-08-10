@@ -31,11 +31,11 @@
 <body id="body-id" no-float="true">
   <div id="top-bar">
     <i class="material-icons top-item" id="hamburger" onclick="toggle_side_menu()">menu</i>
-    <a class="material-icons top-item" id="home-logo" href="/">home</a>
+    <a class="material-icons top-item" id="home-logo" href="/" style="display: none;">home</a>
     <span id="top-logo" class="top-item">Tab-Timer</span>
     <span id="top-right-btns">
       <i class="material-icons top-item top-btn" id="help-btn" style="cursor: pointer;" onclick="fetch('help.html').then(r => r.text()).then(h => { document.getElementById('help-modal-body').innerHTML = h; document.getElementById('help-modal').setAttribute('active', 'true'); })">help_outline</i>
-      <i class="material-icons top-item top-btn" id="info-btn">info_outline</i>
+      <i class="material-icons top-item top-btn" id="info-btn" style="cursor: pointer;" onclick="window.open('https://yoavdim.github.io/Portfolio', '_blank')">info_outline</i>
     </span>
   </div>
 
@@ -57,10 +57,10 @@
       <hr/>
       <input id="check-adv-btns" type="checkbox" onchange="syncAdvBtns()">Advanced buttons</input>
       <hr/>
-      <i class="material-icons">home</i>
-      <i class="material-icons">share</i>
+      <i class="material-icons" style="display: none;">home</i>
+      <i class="material-icons" style="cursor: pointer;" onclick="navigator.clipboard.writeText('Check this cool website: https://yoavdim.github.io/TabTimer/').then(() => alert('Copied to clipboard!'))">share</i>
       <a class="material-icons" href="mailto:yoav.dim@gmail.com" target="_blank">mail</a>
-      <i class="material-icons">person</i>
+      <a class="material-icons" href="https://www.linkedin.com/in/yoav-dim/" target="_blank">person</a>
       <i class="material-icons" title="Copyright &copy; 2018  Yoav Dim, All Rights Reserved.">copyright</i>
 
   </div>

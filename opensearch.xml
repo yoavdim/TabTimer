@@ -4,6 +4,6 @@
 an unintrusive timing tool for the web
 </Description>
     <InputEncoding>UTF-8</InputEncoding>
-    <Image width="16" height="16" type="image/png">https://yoavdim.bitbucket.io/clock_16.png</Image>
-    <Url type="text/html" method="get" template="https://yoavdim.bitbucket.io/index.html?val={searchTerms}"/>
+    <Image width="16" height="16" type="image/png">https://yoavdim.github.io/TabTimer/clock_16.png</Image>
+    <Url type="text/html" method="get" template="https://yoavdim.github.io/TabTimer/index.html?val={searchTerms}"/>
 </OpenSearchDescription>
