@@ -1,9 +1,9 @@
 <OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/" xmlns:moz="http://www.mozilla.org/2006/browser/search/">
 <ShortName>Tab Timer</ShortName>
-<Description>
+    <Description>
 an unintrusive timing tool for the web
 </Description>
-<InputEncoding>UTF-8</InputEncoding>
-<!--Image width="16" height="16" type="image/x-icon">your site favicon</Image-->
-<Url type="text/html" method="get" template="https://yoavdim.bitbucket.io/simple-example/index.html?val={searchTerms}"/>
+    <InputEncoding>UTF-8</InputEncoding>
+    <Image width="16" height="16" type="image/png">https://yoavdim.bitbucket.io/clock_16.png</Image>
+    <Url type="text/html" method="get" template="https://yoavdim.bitbucket.io/index.html?val={searchTerms}"/>
 </OpenSearchDescription>
