@@ -40,29 +40,32 @@
   </div>
 
   <div id="side-menu" checked="false">
-      <br/>
-      <input id="check-dark" type="checkbox" onchange="syncDark()">Dark Mode</input>
-      <br/>
-      <input id="check-black" type="checkbox" onchange="syncBlack()">True Black</input>
-      <hr/>
-      <input id="sw_rng" type="checkbox">Alarm when zero</input><br/>
-      <input id="noise"type="checkbox">Mute</input>
-      <hr/>
-      <input id="check-sec" type="checkbox">ignore seconds</input><br/>
-      <input id="check-log-current" type="checkbox" onchange="syncLogCurrent()" title="also includes the current value in the 'Total' field">log with current</input><br/>
-      <input id="check-use-days" type="checkbox" onchange="syncUseDays()">use days</input>
-      <hr/>
-      <input id="check-log" type="checkbox" onchange="syncLog()">Hide Log</input><br/>
-      <input id="check-float" type="checkbox" onchange="syncFloat()" checked>Hide circles</input>
-      <hr/>
-      <input id="check-adv-btns" type="checkbox" onchange="syncAdvBtns()">Advanced buttons</input>
-      <hr/>
-      <i class="material-icons" style="display: none;">home</i>
-      <i class="material-icons" style="cursor: pointer;" title="share" onclick="navigator.clipboard.writeText('Check this cool website: https://yoavdim.github.io/TabTimer/').then(() => alert('Copied to clipboard!'))">share</i>
-      <a class="material-icons" href="mailto:yoav.dim@gmail.com" target="_blank" title="email me">mail</a>
-      <a class="material-icons" href="https://www.linkedin.com/in/yoav-dim/" target="_blank" title="LinkedIn">person</a>
-      <i class="material-icons" title="Copyright &copy; 2018  Yoav Dim, All Rights Reserved.">copyright</i>
-
+      <div class="sidebar-section">
+        <label class="setting-row"><input id="check-dark" type="checkbox" onchange="syncDark()"> Dark Mode</label>
+        <label class="setting-row"><input id="check-black" type="checkbox" onchange="syncBlack()"> True Black</label>
+      </div>
+      <div class="sidebar-section">
+        <label class="setting-row"><input id="sw_rng" type="checkbox"> Alarm when zero</label>
+        <label class="setting-row"><input id="noise" type="checkbox"> Mute</label>
+      </div>
+      <div class="sidebar-section">
+        <label class="setting-row"><input id="check-sec" type="checkbox"> ignore seconds</label>
+        <label class="setting-row" title="also includes the current value in the 'Total' field"><input id="check-log-current" type="checkbox" onchange="syncLogCurrent()"> log with current</label>
+        <label class="setting-row"><input id="check-use-days" type="checkbox" onchange="syncUseDays()"> use days</label>
+      </div>
+      <div class="sidebar-section">
+        <label class="setting-row"><input id="check-log" type="checkbox" onchange="syncLog()"> Hide Log</label>
+        <label class="setting-row"><input id="check-float" type="checkbox" onchange="syncFloat()" checked> Hide circles</label>
+      </div>
+      <div class="sidebar-section">
+        <label class="setting-row"><input id="check-adv-btns" type="checkbox" onchange="syncAdvBtns()"> Advanced buttons</label>
+      </div>
+      <div class="sidebar-footer">
+        <i class="material-icons footer-icon" style="cursor: pointer;" title="share" onclick="navigator.clipboard.writeText('Check this cool website: https://yoavdim.github.io/TabTimer/').then(() => alert('Copied to clipboard!'))">share</i>
+        <a class="material-icons footer-icon" href="mailto:yoav.dim@gmail.com" target="_blank" title="email me">mail</a>
+        <a class="material-icons footer-icon" href="https://www.linkedin.com/in/yoav-dim/" target="_blank" title="LinkedIn">person</a>
+        <i class="material-icons footer-icon" title="Copyright &copy; 2018  Yoav Dim, All Rights Reserved.">copyright</i>
+      </div>
   </div>
   <script>
     function toggle_side_menu(){
