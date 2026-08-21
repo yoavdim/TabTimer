@@ -30,6 +30,7 @@
 		var view_seconds = true; // only in the timer, log will show seconds always
 		var log_with_current = false;
 		var use_days = false;
+		var isBot = /bot|googlebot|crawler|spider|robot|crawling/i.test(navigator.userAgent);
 
 		window.syncLogCurrentScript = function() {
 			log_with_current = document.getElementById("check-log-current").checked;
@@ -283,7 +284,7 @@
 		}
 		function bruteForceGuiTimeUpdate(val) {
 				document.getElementById("inner-display").innerHTML = format_time(val, view_seconds);
-				document.title = format_time_title(val, view_seconds);
+				if (!isBot) document.title = format_time_title(val, view_seconds);
 		}
 		function bruteForceClockGuiUpdate(ice = false){
 			if(ice){
@@ -293,7 +294,7 @@
 			}
 			var str = clock_format(today);
 			document.getElementById('inner-display').innerHTML = str;
-			document.title = str;
+			if (!isBot) document.title = str;
 		}
 		function clock_format(today){
 			function checkTime(i) {

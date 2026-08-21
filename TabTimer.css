@@ -156,7 +156,7 @@ body[no-log] {
   vertical-align: middle;
 }
 #top-logo {
-  font-family: var(--font)
+  font-family: var(--font);
   font-weight: bold;
 }
 #top-bar .top-btn {
@@ -526,9 +526,6 @@ input[type="text"] {
 #log-top {
   height: var(--log-top-height);
   position: relative;
-}
-#btn-scroll {
-
 }
 #log-card * {
   font-size: 1.2rem;
