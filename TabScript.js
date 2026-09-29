@@ -223,9 +223,12 @@
 		}
 		function terminationUpdate() {
 			if(isNeedTermination()) {
+				if (!was_alerted) notifyTimesUp();
 				pause();
 				if(ring_aloud && !was_alerted) {
 					beep();
+				} else {
+					was_alerted = true;
 				}
 			} else was_alerted = false;
 		}
@@ -695,6 +698,12 @@
 		}
 
 		// ---- timerAPI: generic event interface for external consumers ----
+		function notifyTimesUp() {
+			window.dispatchEvent(new CustomEvent("timerAPI:timesup", {
+				detail: { value: present_value }
+			}));
+		}
+
 		window.addEventListener("timerAPI:request", function(e) {
 			var opts = (e.detail || {});
 			var resp = {
