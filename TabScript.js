@@ -693,3 +693,58 @@
 			let cnt = document.getElementById("log-count").querySelector(".log-value");
 			cnt.innerHTML = "0";
 		}
+
+		// ---- timerAPI: generic event interface for external consumers ----
+		window.addEventListener("timerAPI:request", function(e) {
+			var opts = (e.detail || {});
+			var resp = {
+				direction: present_direction ? "up" : "down",
+				isRunning: !present_paused,
+				value: format_time(present_value, true),
+				rawValue: present_value
+			};
+			if (opts.include_log) {
+				var rows = document.getElementById("log-table").querySelectorAll("tr.log-entry");
+				resp.log = Array.from(rows, function(r) {
+					return {
+						value: Number(r.querySelector(".log-entry-value").getAttribute("value")),
+						time: r.querySelector(".log-entry-time").textContent
+					};
+				});
+			}
+			window.dispatchEvent(new CustomEvent("timerAPI:response", { detail: resp }));
+		});
+
+		window.addEventListener("timerAPI:action", function(e) {
+			var d = e.detail || {};
+			var action = d.action;
+			if      (action === "play")   resume();
+			else if (action === "pause")  pause();
+			else if (action === "toggle") myFlip();
+			else if (action === "reset")  medium_reset();
+			else if (action === "log")    logtime();
+			else if (action === "lap")    loglap();
+			else if (action === "clear-log") clearlogs();
+			else if (action === "reverse") change_direction();
+			else if (action === "advance-reset") {
+				var t = d.value;
+				if      (t === "ice")     winter_reset();
+				else if (t === "full")    large_reset();
+				else if (t === "round")   small_reset();
+				else if (t === "regular") medium_reset();
+				else console.warn("Unsupported reset type:", t);
+			}
+			else if (action === "set" && d.value != null) {
+				var ms = deformat_time(String(d.value));
+				if (ms != null && !isNaN(ms)) do_setup(ms);
+			}
+			else if (action === "add" && d.value != null) {
+				var ms = deformat_time(String(d.value));
+				if (ms != null && !isNaN(ms)) {
+					applyState(present_value + ms, present_direction);
+					set_start_as_present();
+					myUpdate();
+				}
+			}
+			else console.warn("Unsupported action:", action);
+		});
